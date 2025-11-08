@@ -1,0 +1,209 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Review Application{% endblock %}
+
+{% block breadcrumb %}
+<li>
+    <div class="flex items-center">
+        <svg class="w-3 h-3 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <a href="{% url 'manage_applications' %}" class="text-gray-700 hover:text-blue-600 ml-1 md:ml-2">Applications</a>
+    </div>
+</li>
+<li>
+    <div class="flex items-center">
+        <svg class="w-3 h-3 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-blue-600 ml-1 md:ml-2 font-medium">Review</span>
+    </div>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <!-- Application Status Card -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Application Review</h1>
+                <p class="text-gray-600 text-sm mt-1">Review membership application details</p>
+            </div>
+            <div>
+                {% if application.status == 'pending' %}
+                <span class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">Pending Review</span>
+                {% elif application.status == 'approved' %}
+                <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">Approved</span>
+                {% elif application.status == 'rejected' %}
+                <span class="px-4 py-2 bg-red-100 text-red-800 rounded-full text-sm font-medium">Rejected</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Applicant Information -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Applicant Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex items-center space-x-4">
+                {% if application.user.profile_picture %}
+                <img src="{{ application.user.profile_picture.url }}" alt="{{ application.user.username }}" class="w-16 h-16 rounded-full object-cover">
+                {% else %}
+                <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span class="text-blue-600 font-semibold text-xl">{{ application.user.username.0|upper }}</span>
+                </div>
+                {% endif %}
+                <div>
+                    <h3 class="font-semibold text-gray-900">{{ application.user.get_full_name|default:application.user.username }}</h3>
+                    <p class="text-sm text-gray-600">{{ application.user.personal_email }}</p>
+                    {% if application.user.phone %}
+                    <p class="text-sm text-gray-600">{{ application.user.phone }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="space-y-2">
+                {% if application.user.course %}
+                <div class="flex">
+                    <span class="text-sm font-medium text-gray-500 w-32">Course:</span>
+                    <span class="text-sm text-gray-900">{{ application.user.get_course_display }}</span>
+                </div>
+                {% endif %}
+                {% if application.user.year %}
+                <div class="flex">
+                    <span class="text-sm font-medium text-gray-500 w-32">Year:</span>
+                    <span class="text-sm text-gray-900">{{ application.user.get_year_display }}</span>
+                </div>
+                {% endif %}
+                {% if application.user.branch %}
+                <div class="flex">
+                    <span class="text-sm font-medium text-gray-500 w-32">Branch:</span>
+                    <span class="text-sm text-gray-900">{{ application.user.branch }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Club Information -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Applying to</h2>
+        <div class="flex items-center space-x-4">
+            {% if application.club.logo %}
+            <img src="{{ application.club.logo.url }}" alt="{{ application.club.name }}" class="w-12 h-12 rounded-full object-cover">
+            {% else %}
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                <span class="text-blue-600 font-semibold">{{ application.club.name.0 }}</span>
+            </div>
+            {% endif %}
+            <div>
+                <h3 class="font-semibold text-gray-900">{{ application.club.name }}</h3>
+                <p class="text-sm text-gray-600">{{ application.club.contact_email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Responses -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Application Responses</h2>
+        
+        <div class="space-y-6">
+            <div>
+                <h3 class="font-medium text-gray-900 mb-2">Why do you want to join this club?</h3>
+                <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">{{ application.why_join }}</p>
+            </div>
+            
+            <div>
+                <h3 class="font-medium text-gray-900 mb-2">What skills can you contribute?</h3>
+                <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">{{ application.skills }}</p>
+            </div>
+            
+            <div>
+                <h3 class="font-medium text-gray-900 mb-2">Previous experience</h3>
+                <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">{{ application.experience|default:"No previous experience mentioned" }}</p>
+            </div>
+            
+            <div>
+                <h3 class="font-medium text-gray-900 mb-2">What do you expect from the club?</h3>
+                <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">{{ application.expectations }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Timeline -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Application Timeline</h2>
+        <div class="space-y-4">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-900">Application Submitted</p>
+                    <p class="text-xs text-gray-500">{{ application.applied_date|date:"F d, Y H:i A" }}</p>
+                </div>
+            </div>
+            {% if application.reviewed_date %}
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-2 h-2 {% if application.status == 'approved' %}bg-green-600{% else %}bg-red-600{% endif %} rounded-full mt-2"></div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-900">Application {{ application.get_status_display }}</p>
+                    <p class="text-xs text-gray-500">{{ application.reviewed_date|date:"F d, Y H:i A" }} by {{ application.reviewed_by.username }}</p>
+                    {% if application.notes %}
+                    <p class="text-sm text-gray-700 mt-1 bg-gray-50 p-2 rounded">{{ application.notes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Review Form (only show if status is pending) -->
+    {% if application.status == 'pending' %}
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Review Decision</h2>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-6">
+                <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
+                    Review Notes (Optional)
+                </label>
+                <textarea id="notes" name="notes" rows="4"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Add any notes about this application..."></textarea>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="submit" name="action" value="approve" 
+                    class="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    Approve Application
+                </button>
+                
+                <button type="submit" name="action" value="reject" 
+                    class="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    Reject Application
+                </button>
+            </div>
+            
+            <a href="{% url 'manage_applications' %}" class="block text-center mt-4 text-gray-600 hover:text-gray-900">
+                Back to Applications
+            </a>
+        </form>
+    </div>
+    {% else %}
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <p class="text-center text-gray-600">
+            This application has already been {{ application.get_status_display|lower }}.
+        </p>
+        <a href="{% url 'manage_applications' %}" class="block text-center mt-4 text-blue-600 hover:text-blue-800 font-medium">
+            Back to Applications
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,552 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
+{% block content %}
+<!-- Dashboard Content -->
+<div id="dashboard-content">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Total Clubs Card -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-600 font-medium">Total Clubs</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_clubs }}</p>
+                <p class="text-xs text-green-600 mt-2">
+                    <span class="font-semibold">Active</span>
+                </p>
+            </div>
+            <div class="bg-blue-100 rounded-full p-3">
+                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Users Card -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-600 font-medium">Total Users</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_users }}</p>
+                <p class="text-xs text-green-600 mt-2">
+                    <span class="font-semibold">Registered</span>
+                </p>
+            </div>
+            <div class="bg-green-100 rounded-full p-3">
+                <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Events Card -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-600 font-medium">Total Events</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_events }}</p>
+                <p class="text-xs text-blue-600 mt-2">
+                    <span class="font-semibold">Scheduled</span>
+                </p>
+            </div>
+            <div class="bg-purple-100 rounded-full p-3">
+                <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Applications Card -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-600 font-medium">Pending Applications</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">{{ pending_applications }}</p>
+                <p class="text-xs text-orange-600 mt-2">
+                    <span class="font-semibold">Needs Review</span>
+                </p>
+            </div>
+            <div class="bg-orange-100 rounded-full p-3">
+                <svg class="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Two Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Recent Clubs -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold text-gray-900">Recent Clubs</h2>
+            <a href="{% url 'manage_club' %}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
+        </div>
+        <div class="space-y-4">
+            {% for club in recent_clubs %}
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                <div class="flex items-center space-x-3">
+                    {% if club.logo %}
+                    <img src="{{ club.logo.url }}" alt="{{ club.name }}" class="w-10 h-10 rounded-full object-cover">
+                    {% else %}
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <span class="text-blue-600 font-semibold">{{ club.name.0 }}</span>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <p class="font-medium text-gray-900">{{ club.name }}</p>
+                        <p class="text-xs text-gray-500">{{ club.founded_date|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Active</span>
+            </div>
+            {% empty %}
+            <p class="text-center text-gray-500 py-8">No clubs yet</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold text-gray-900">Recent Applications</h2>
+            <a href="{% url 'manage_applications' %}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
+        </div>
+        <div class="space-y-4">
+            {% for app in recent_applications %}
+            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span class="text-gray-600 font-semibold">{{ app.user.username.0|upper }}</span>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900">{{ app.user.username }}</p>
+                        <p class="text-xs text-gray-500">{{ app.club.name }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    {% if app.status == 'pending' %}
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">Pending</span>
+                    {% elif app.status == 'approved' %}
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Approved</span>
+                    {% elif app.status == 'rejected' %}
+                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">Rejected</span>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">{{ app.applied_date|date:"M d" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-gray-500 py-8">No applications yet</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Events -->
+<div class="bg-white rounded-lg shadow-sm p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-gray-900">Upcoming Events</h2>
+        <a href="{% url 'manage_events' %}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3">Event Name</th>
+                    <th scope="col" class="px-6 py-3">Club</th>
+                    <th scope="col" class="px-6 py-3">Date</th>
+                    <th scope="col" class="px-6 py-3">Type</th>
+                    <th scope="col" class="px-6 py-3">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in recent_events %}
+                <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer" onclick="window.location='{% url 'event_details' event.id %}'">
+                    <td class="px-6 py-4 font-medium text-gray-900">{{ event.title }}</td>
+                    <td class="px-6 py-4">{{ event.club.name }}</td>
+                    <td class="px-6 py-4">{{ event.start_time|date:"M d, Y" }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs capitalize">
+                            {{ event.event_type }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if event.status == 'upcoming' %}
+                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Upcoming</span>
+                        {% elif event.status == 'ongoing' %}
+                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Ongoing</span>
+                        {% elif event.status == 'completed' %}
+                        <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-8 text-gray-500">No events scheduled</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <a href="{% url 'add_club' %}" class="flex items-center justify-center p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition">
+        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"></path>
+        </svg>
+        <span class="font-medium">Add New Club</span>
+    </a>
+    <a href="{% url 'add_event' %}" class="flex items-center justify-center p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition">
+        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="font-medium">Create Event</span>
+    </a>
+    <a href="{% url 'manage_applications' %}" class="flex items-center justify-center p-4 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition">
+        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="font-medium">Review Applications</span>
+    </a>
+</div>
+</div>
+
+<!-- Profile Section -->
+<section id="section-profile" class="mt-6 hidden">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-bold text-gray-900">Profile Information</h3>
+        <p class="text-sm text-gray-600 mt-1">Update your personal and academic information</p>
+      </div>
+      <button onclick="showDashboardContent()" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+      </button>
+    </div>
+    
+    <form method="post" action="{% url 'admin_dashboard' %}" enctype="multipart/form-data" class="p-6">
+      {% csrf_token %}
+      
+      <!-- Profile Picture Section -->
+      <div class="mb-8">
+        <label class="block text-sm font-medium text-gray-700 mb-4">Profile Picture</label>
+        <div class="flex items-center gap-6">
+          <div class="relative">
+            {% if request.user.profile_picture %}
+              <img id="profilePreview" src="{{ request.user.profile_picture.url }}" class="w-24 h-24 rounded-full object-cover border-4 border-gray-200" alt="Profile">
+            {% else %}
+              <div id="profilePreview" class="w-24 h-24 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center text-white font-bold text-3xl border-4 border-gray-200">
+                {{ request.user.username|first|upper }}
+              </div>
+            {% endif %}
+            <label for="profile_picture" class="absolute bottom-0 right-0 bg-white rounded-full p-2 border-2 border-gray-300 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </label>
+            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="hidden">
+          </div>
+          <div>
+            <p class="text-sm text-gray-700 font-medium">{{ request.user.username }}</p>
+            <p class="text-xs text-gray-500 mt-1">JPG, PNG or GIF. Max size 5MB</p>
+            <button type="button" onclick="document.getElementById('profile_picture').click()" class="mt-2 text-xs text-purple-600 hover:text-purple-700 font-medium">
+              Change photo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="mb-8">
+        <h4 class="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Basic Information</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Username <span class="text-red-500">*</span>
+            </label>
+            <input type="text" name="username" value="{{ request.user.username }}" required 
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <input type="tel" name="phone" value="{{ request.user.phone }}" 
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+              placeholder="+91 00000 00000">
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Information -->
+      <div class="mb-8">
+        <h4 class="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Email Addresses</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Personal Email <span class="text-red-500">*</span>
+            </label>
+            <input type="email" name="personal_email" value="{{ request.user.personal_email|default:request.user.email }}" required 
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+              placeholder="your.email@example.com">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">College Email</label>
+            <input type="email" name="college_email" value="{{ request.user.college_email }}" 
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+              placeholder="student@college.edu">
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Information -->
+      <div class="mb-8">
+        <h4 class="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Academic Details</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
+            <select name="course" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white">
+              <option value="">Select Course</option>
+              <option value="btech" {% if request.user.course == 'btech' %}selected{% endif %}>B.Tech</option>
+              <option value="mtech" {% if request.user.course == 'mtech' %}selected{% endif %}>M.Tech</option>
+              <option value="bca" {% if request.user.course == 'bca' %}selected{% endif %}>BCA</option>
+              <option value="mca" {% if request.user.course == 'mca' %}selected{% endif %}>MCA</option>
+              <option value="bba" {% if request.user.course == 'bba' %}selected{% endif %}>BBA</option>
+              <option value="mba" {% if request.user.course == 'mba' %}selected{% endif %}>MBA</option>
+              <option value="bsc" {% if request.user.course == 'bsc' %}selected{% endif %}>B.Sc</option>
+              <option value="msc" {% if request.user.course == 'msc' %}selected{% endif %}>M.Sc</option>
+              <option value="other" {% if request.user.course == 'other' %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
+            <select name="year" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white">
+              <option value="">Select Year</option>
+              <option value="1" {% if request.user.year == '1' %}selected{% endif %}>First Year</option>
+              <option value="2" {% if request.user.year == '2' %}selected{% endif %}>Second Year</option>
+              <option value="3" {% if request.user.year == '3' %}selected{% endif %}>Third Year</option>
+              <option value="4" {% if request.user.year == '4' %}selected{% endif %}>Fourth Year</option>
+              <option value="alumni" {% if request.user.year == 'alumni' %}selected{% endif %}>Alumni</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Enrollment Number</label>
+            <input type="text" name="enrollment_number" value="{{ request.user.enrollment_number }}" 
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+              placeholder="ENR2024001">
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Branch/Department</label>
+          <input type="text" name="branch" value="{{ request.user.branch }}" 
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
+            placeholder="e.g., Computer Science Engineering">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
+        <button type="button" onclick="window.location.reload()" class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-colors shadow-sm">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Success/Error Messages -->
+  {% if messages %}
+  <div class="mt-6 space-y-3">
+    {% for message in messages %}
+    <div class="p-4 rounded-lg flex items-start gap-3 {% if message.tags == 'success' %}bg-green-50 border border-green-200{% elif message.tags == 'error' %}bg-red-50 border border-red-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
+      <svg class="w-5 h-5 flex-shrink-0 mt-0.5 {% if message.tags == 'success' %}text-green-500{% elif message.tags == 'error' %}text-red-500{% else %}text-blue-500{% endif %}" fill="currentColor" viewBox="0 0 20 20">
+        {% if message.tags == 'success' %}
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        {% elif message.tags == 'error' %}
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        {% else %}
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        {% endif %}
+      </svg>
+      <p class="text-sm font-medium {% if message.tags == 'success' %}text-green-800{% elif message.tags == 'error' %}text-red-800{% else %}text-blue-800{% endif %}">
+        {{ message }}
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+<!-- Change Password Section -->
+<section id="section-change-password" class="mt-6 hidden">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-bold text-gray-900">Change Password</h3>
+        <p class="text-sm text-gray-600 mt-1">Update your account password</p>
+      </div>
+      <button onclick="showDashboardContent()" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+      </button>
+    </div>
+    
+    <div class="p-6 max-w-2xl">
+      <form method="post" action="{% url 'change_password' %}" class="space-y-5">
+        {% csrf_token %}
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+          <input type="password" name="current_password" required 
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+          <input type="password" name="new_password" required 
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+          <p class="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+          <input type="password" name="confirm_password" required 
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+        </div>
+        
+        <div class="pt-4">
+          <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-colors">
+            Update Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 2FA Section -->
+<section id="section-2fa" class="mt-6 hidden">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-bold text-gray-900">Two-Factor Authentication</h3>
+        <p class="text-sm text-gray-600 mt-1">Add an extra layer of security to your account</p>
+      </div>
+      <button onclick="showDashboardContent()" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+      </button>
+    </div>
+    
+    <div class="p-6 max-w-2xl">
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <div>
+            <h4 class="text-sm font-semibold text-blue-900 mb-1">2FA is not enabled</h4>
+            <p class="text-xs text-blue-800">Protect your account by enabling two-factor authentication</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Profile picture preview
+  (function() {
+    const fileInput = document.getElementById('profile_picture');
+    const preview = document.getElementById('profilePreview');
+    
+    if (fileInput && preview) {
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            if (preview.tagName === 'IMG') {
+              preview.src = e.target.result;
+            } else {
+              const img = document.createElement('img');
+              img.id = 'profilePreview';
+              img.src = e.target.result;
+              img.className = 'w-24 h-24 rounded-full object-cover border-4 border-gray-200';
+              preview.parentNode.replaceChild(img, preview);
+            }
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  })();
+
+  // Section navigation functions
+  function showSection(sectionName) {
+    // Hide dashboard content
+    const dashboardContent = document.getElementById('dashboard-content');
+    if (dashboardContent) {
+      dashboardContent.classList.add('hidden');
+    }
+    
+    // Hide all sections
+    const sections = ['section-profile', 'section-change-password', 'section-2fa'];
+    sections.forEach(function(id) {
+      const section = document.getElementById(id);
+      if (section) {
+        section.classList.add('hidden');
+      }
+    });
+    
+    // Show the requested section
+    const targetSection = document.getElementById('section-' + sectionName);
+    if (targetSection) {
+      targetSection.classList.remove('hidden');
+      setTimeout(function() {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }
+
+  // Show profile section if hash is present on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash === '#section-profile') {
+      if (typeof showProfileSection === 'function') {
+        showProfileSection();
+      }
+    } else if (hash === '#section-change-password') {
+      showSection('change-password');
+    } else if (hash === '#section-2fa') {
+      showSection('2fa');
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,135 @@
+<!-- templates/users/loginPage.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Welcome Back</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex items-center justify-center p-4">
+    
+    <div class="flex items-stretch max-w-6xl w-full gap-0 shadow-2xl rounded-2xl overflow-hidden">
+        
+        <!-- Illustration Section -->
+        <div class="hidden lg:flex w-2/5 bg-[#560bad] items-center justify-center p-12">
+            <img src="{% static 'users/images/auth/login.svg' %}" alt="Login Illustration" class="w-full h-auto max-w-md">
+        </div>
+
+        <!-- Login Form Section -->
+        <div class="w-full lg:w-3/5 bg-white p-8 md:p-12">
+            <!-- Logo/Brand -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">Welcome Back</h1>
+                <p class="text-slate-500">Sign in with your email or username</p>
+            </div>
+
+            <!-- Simple Error Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="message-alert p-3 mb-3 text-sm text-red-700 bg-red-100 rounded-lg border border-red-200 flex items-center">
+                        <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        {{ message }}
+                    </div>
+                    {% elif message.tags == 'success' %}
+                    <div class="message-alert p-3 mb-3 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200 flex items-center">
+                        <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        {{ message }}
+                    </div>
+                    {% else %}
+                    <div class="message-alert p-3 mb-3 text-sm text-blue-700 bg-blue-100 rounded-lg border border-blue-200">
+                        {{ message }}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="POST" action="{% url 'login' %}" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Login Role Dropdown -->
+                <div>
+                    <label for="role" class="block mb-2 text-sm font-medium text-slate-700">Login As</label>
+                    <select 
+                        id="role" 
+                        name="role"
+                        class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-[#560bad] focus:border-[#560bad] block w-full p-3 transition duration-200"
+                        required
+                    >
+                        <option value="" disabled selected>Select your role</option>
+                        <option value="member">Member</option>
+                        <option value="admin">Admin</option>
+                        <option value="superadmin">Super Admin</option>
+                    </select>
+                </div>
+
+                <!-- Email or Username Input -->
+                <div>
+                    <label for="id_username" class="block mb-2 text-sm font-medium text-slate-700">Email or Username</label>
+                    <input 
+                        type="text" 
+                        name="username" 
+                        id="id_username" 
+                        value="{{ form.username.value|default:'' }}"
+                        class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-[#560bad] focus:border-[#560bad] block w-full p-3 transition duration-200" 
+                        placeholder="Enter your email or username" 
+                        required
+                    >
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label for="id_password" class="block mb-2 text-sm font-medium text-slate-700">Password</label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="id_password" 
+                        class="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-[#560bad] focus:border-[#560bad] block w-full p-3 transition duration-200" 
+                        placeholder="••••••••" 
+                        required
+                    >
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input 
+                            id="remember" 
+                            type="checkbox" 
+                            class="w-4 h-4 text-[#560bad] bg-slate-100 border-slate-300 rounded focus:ring-[#560bad] focus:ring-2"
+                        >
+                        <label for="remember" class="ml-2 text-sm text-slate-600">Remember me</label>
+                    </div>
+                    <a href="#" class="text-sm text-[#560bad] hover:text-[#560bad] font-medium transition">Forgot password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="w-full text-white bg-[#560bad] hover:bg-[#560bad] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition duration-200"
+                >
+                    Sign In
+                </button>
+
+                <!-- Sign Up Link -->
+                <p class="text-center text-sm text-slate-600 mt-6">
+                    Don't have an account? 
+                    <a href="{% url 'signup' %}" class="text-[#560bad] hover:text-[#560bad] font-medium transition">Sign up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+</body>
+</html>

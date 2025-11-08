@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - KIT College</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="flex items-stretch max-w-6xl w-full gap-0 shadow-2xl rounded-2xl overflow-hidden">
+
+        <!-- Signup Form Section -->
+        <div class="w-full lg:w-3/5 bg-white p-8 md:p-12">
+            <!-- Logo/Brand -->
+            <div class="mb-6">
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">Create Account</h1>
+                <p class="text-slate-500">Sign up with your email</p>
+            </div>
+
+            <!-- Display Messages -->
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg {% if message.tags == 'success' %}text-green-700 bg-green-100{% endif %}"
+                    role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Signup Form -->
+            <form method="POST" action="{% url 'signup' %}" class="space-y-4">
+                {% csrf_token %}
+
+                <!-- Username Input -->
+                <div>
+                    <label for="id_username" class="block mb-2 text-sm font-medium text-slate-700">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- College Email Input -->
+                <!-- templates/users/signup.html -->
+                <!-- Update the email field to personal_email -->
+                <div>
+                    <label for="id_personal_email" class="block mb-2 text-sm font-medium text-slate-700">Personal Email
+                        *</label>
+                    <input type="email" name="personal_email" id="id_personal_email"
+                        value="{{ form.personal_email.value|default:'' }}"
+                        class="bg-slate-50 border {% if form.personal_email.errors %}border-red-500{% else %}border-slate-300{% endif %} text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-[#560bad] focus:border-[#560bad] block w-full p-3 transition duration-200"
+                        placeholder="your.email@gmail.com" required>
+                    {% if form.personal_email.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.personal_email.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="text-xs text-slate-500 mt-1">This will be used for login</p>
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label for="id_password1" class="block mb-2 text-sm font-medium text-slate-700">Password</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.password1.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div>
+                    <label for="id_password2" class="block mb-2 text-sm font-medium text-slate-700">Confirm
+                        Password</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                    <div class="text-red-600 text-sm mt-1">
+                        {% for error in form.password2.errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input id="terms" type="checkbox"
+                            class="w-4 h-4 text-[#560bad] bg-slate-100 border-slate-300 rounded focus:ring-[#560bad] focus:ring-2"
+                            required>
+                    </div>
+                    <label for="terms" class="ml-2 text-sm text-slate-600">
+                        I accept all <a href="#"
+                            class="text-[#560bad] hover:text-[#560bad] font-medium transition">terms & conditions</a>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                    class="w-full text-white bg-[#560bad] hover:bg-[#560bad] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition duration-200">
+                    Create KIT Account
+                </button>
+
+                <!-- Login Link -->
+                <p class="text-center text-sm text-slate-600 mt-4">
+                    Already have an account?
+                    <a href="{% url 'login' %}" class="text-[#560bad] hover:text-[#560bad] font-medium transition">Sign
+                        in with college email</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Illustration Section -->
+        <div
+            class="hidden lg:flex w-2/5 bg-gradient-to-br from-[#560bad] to-[#560bad] items-center justify-center p-12">
+            <img src="{% static 'users/images/auth/register.svg' %}" alt="Signup Illustration"
+                class="w-full h-auto max-w-md">
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+</body>
+
+</html>

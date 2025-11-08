@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}ClubSphere - Connect, Discover, Engage{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'src/landing.css' %}" />
+
+    <!-- Flowbite CSS & JS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+
+    <!-- AOS Animation Library -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <style>
+      {% block extra_css %}{% endblock %}
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 0.5s ease;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 flex flex-col min-h-screen overflow-x-hidden">
+    <!-- ✅ Header (common across all pages) -->
+     {% comment %} {% if request.resolver_match.url_name != 'landing' %} {% endcomment %}
+      <header class="main-header transparent-navbar {% if request.resolver_match.url_name != 'Landing' %}Header-bg{% endif %}">
+      <nav class="nav-bar">
+        <div class="logo">
+          <span class="logo-icon"></span>
+          <span class="logo-text">ClubSphere<sub style="font-size: 0.6em; font-weight: 600; margin-left: 2px; color: inherit;">KIT</sub></span>
+        </div>
+       <ul class="nav-links">
+  <li><a href="{% url 'Landing' %}">Home</a></li>
+  <li><a href="{% url 'Landing' %}#clubs-section" onclick="scrollToClubs(event)">Clubs</a></li>
+
+  {% if user.is_authenticated %}
+      {% if user.role == 'member' %}
+          <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+
+      {% elif user.role == 'admin' %}
+          <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+      {% endif %}
+
+  {% else %}
+      <li><a href="{% url 'signup' %}">Register</a></li>
+      <li><a href="{% url 'login' %}">Login</a></li>
+  {% endif %}
+</ul>
+
+      </nav>  
+    </header>
+
+    <!-- Alert message for login -->
+    {% if messages %}
+      <div class="fixed top-5 right-5 z-50">
+        {% for message in messages %}
+          <div class="message-alert px-6 py-3 rounded shadow mb-2 animate-fade-in text-white
+                      {% if message.tags == 'error' %}bg-red-500{% elif message.tags == 'success' %}bg-green-500{% else %}bg-blue-500{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+   
+
+    <!-- ✅ Main Content (changes per template) -->
+    <main class="flex-grow">
+      {% block content %}{% endblock %}
+    </main>
+
+   <!-- Footer -->
+  <footer class="bg-gray-50 pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        
+        <!-- Logo & Social -->
+        <div class="space-y-6">
+          <div class="flex items-center space-x-2">
+            <svg class="w-8 h-8 text-teal-600" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+            </svg>
+            <span class="text-xl font-bold text-gray-800">CLUBSPHERE</span>
+          </div>
+          
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-teal-500 hover:text-white transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-teal-500 hover:text-white transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+              </svg>
+            </a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-teal-500 hover:text-white transition">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.441 16.892c-2.102.144-6.784.144-8.883 0C5.282 16.736 5.017 15.622 5 12c.017-3.629.285-4.736 2.558-4.892 2.099-.144 6.782-.144 8.883 0C18.718 7.264 18.982 8.378 19 12c-.018 3.629-.285 4.736-2.559 4.892zM10 9.658l4.917 2.338L10 14.342V9.658z"/>
+              </svg>
+            </a>
+          </div>
+          
+          <div class="pt-4">
+            <svg class="w-32 h-24 text-gray-300" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 40 Q 30 20 50 40 T 90 40" stroke-linecap="round"/>
+              <path d="M95 35 L 100 40 L 95 45" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Quick Menu -->
+        <div>
+          <h3 class="text-gray-900 font-bold text-lg mb-6">Quick Menu</h3>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Home</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Dashboard</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Login</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Register</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">About Us</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Career</a></li>
+          </ul>
+        </div>
+
+        <!-- Services -->
+        <div>
+          <h3 class="text-gray-900 font-bold text-lg mb-6">Services</h3>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Clubs</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Events</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">News</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Gallery</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal & Information -->
+        <div>
+          <h3 class="text-gray-900 font-bold text-lg mb-6">Legal</h3>
+          <ul class="space-y-3 mb-6">
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Terms & Conditions</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Privacy Policy</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">FAQs</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-teal-600 transition">Blog</a></li>
+          </ul>
+          
+          <h3 class="text-gray-900 font-bold text-lg mb-4">Information</h3>
+          <div class="text-gray-600 text-sm space-y-2">
+            <p>Kanpur Institute of Technology</p>
+            <p>Rooma, Kanpur</p>
+            <p>India</p>
+            <!-- <p class="pt-2">(Registrar - 8870416)</p> -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <p class="text-gray-600 text-sm">
+          Copyright© 2025 <a href="#" class="text-teal-600 hover:underline">Clubsphere</a>.
+        </p>
+        <p class="text-gray-600 text-sm">
+          Need help? Visit the <a href="#" class="text-purple-600 hover:underline">Contact Us</a>
+        </p>
+      </div>
+
+      <!-- Scroll to Top Button -->
+      <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+              class="fixed bottom-8 right-8 w-14 h-14 bg-gray-900 hover:bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center transition transform hover:scale-110">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+      </button>
+    </div>
+  </footer>
+
+    <script>
+      function toggleDropdown() {
+        document.getElementById("dropdown").classList.toggle("show");
+      }
+      window.onclick = function (event) {
+        if (!event.target.matches(".profile-pic")) {
+          var dropdowns = document.getElementsByClassName("dropdown-content");
+          for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains("show")) {
+              openDropdown.classList.remove("show");
+            }
+          }
+        }
+      };
+      // Auto-dismiss Django messages with fade/slide animation (~2.5s)
+      document.addEventListener('DOMContentLoaded', function () {
+        var alerts = document.querySelectorAll('.message-alert');
+        alerts.forEach(function (el) {
+          setTimeout(function () {
+            el.style.transition = 'opacity 400ms ease, transform 400ms ease';
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-6px)';
+            setTimeout(function () { el.remove(); }, 420);
+          }, 2500);
+        });
+      });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>
