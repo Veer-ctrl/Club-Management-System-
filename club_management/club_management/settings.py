@@ -1,5 +1,5 @@
 import os
-
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -132,3 +132,20 @@ LOGOUT_REDIRECT_URL = 'Landing'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 ALLOWED_HOSTS = ['*']
+
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'ERROR',
+    },
+}
