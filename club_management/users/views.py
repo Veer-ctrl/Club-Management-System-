@@ -484,7 +484,7 @@ def add_club(request):
                 logo=logo
             )
             messages.success(request, f'Club "{club.name}" created successfully!')
-            return redirect('admin_manage_clubs')
+            return redirect('manage_club')
         except Exception as e:
             messages.error(request, f'Error creating club: {str(e)}')
     

@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+Venv/
+*.env
+.env
+
+# Django database
+db.sqlite3
+
+# Media uploads (user uploaded images)
+media/
+
+# Node / frontend folders
+node_modules/
+
+# Static collection output
+staticfiles/
+
+# OS system files
+.DS_Store
+Thumbs.db
