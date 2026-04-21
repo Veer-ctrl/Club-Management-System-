@@ -75,7 +75,7 @@
 
                 <!-- Email or Username Input -->
                 <div>
-                    <label for="id_username" class="block mb-2 text-sm font-medium text-slate-700">Email or Username</label>
+                    <label for="id_username" class="block mb-2 text-sm font-medium text-slate-700">Email</label>
                     <input 
                         type="text" 
                         name="username" 
@@ -101,17 +101,17 @@
                 </div>
 
                 <!-- Remember Me & Forgot Password -->
-                <div class="flex items-center justify-between">
+                {% comment %} <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <input 
-                            id="remember" 
+                            id="remember"   
                             type="checkbox" 
                             class="w-4 h-4 text-[#560bad] bg-slate-100 border-slate-300 rounded focus:ring-[#560bad] focus:ring-2"
                         >
                         <label for="remember" class="ml-2 text-sm text-slate-600">Remember me</label>
                     </div>
                     <a href="#" class="text-sm text-[#560bad] hover:text-[#560bad] font-medium transition">Forgot password?</a>
-                </div>
+                </div> {% endcomment %}
 
                 <!-- Submit Button -->
                 <button 

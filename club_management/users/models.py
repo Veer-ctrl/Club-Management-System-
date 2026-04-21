@@ -1,6 +1,7 @@
 # users/models.py
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
 
 class CustomUser(AbstractUser):
     COURSE_CHOICES = [
@@ -65,3 +66,37 @@ class CustomUser(AbstractUser):
     
     def __str__(self):
         return self.email
+
+    # --- Admin/scoping fields (see migrations for details) ---
+
+    assigned_club = models.ForeignKey(
+        'clubs.Club',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='assigned_admin_users',
+        help_text='Assign one club to this admin user.'
+    )
+
+    email_event_notifications = models.BooleanField(default=True)
+
+
+class EventNotification(models.Model):
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    club = models.ForeignKey('clubs.Club', on_delete=models.CASCADE)
+    event = models.ForeignKey('Events.Event', null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='event_notifications',
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} -> {self.user}"

@@ -7,8 +7,162 @@
   <title>Dashboard - ClubSphere</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      .btn {
+  display: inline-block;
+  padding: 0.65rem 1.0rem;
+  background: #fff;
+  color: #222;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background 0.3s, color 0.3s;
+  font-size: 0.8rem;
+}
+
+.btn:hover {
+  background: #a259ff;
+  color: #fff;
+  
+}
+      :root {
+        --bg-outer: #0b0b12;
+        --bg-container: #050509;
+        --bg-card: #111827;
+        --bg-card-hover: #1f2937;
+        --border: #374151;
+        --border-strong: #4b5563;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent-blue: #60a5fa;
+        --accent-green: #22c55e;
+        --accent-purple: #a78bfa;
+        --accent-orange: #fb923c;
+      }
+      body {
+        background: var(--bg-outer) !important;
+        color: var(--text-primary) !important;
+        font-family: 'Sora', sans-serif !important;
+      }
+      .flex.h-screen.overflow-hidden {
+        background: var(--bg-outer) !important;
+      }
+      aside.w-64 {
+        background: var(--bg-container) !important;
+        border-color: var(--border) !important;
+      }
+      .bg-white {
+        background: var(--bg-card) !important;
+        border-color: var(--border) !important;
+      }
+      .border-gray-200 {
+        border-color: var(--border) !important;
+      }
+      .border-gray-300 {
+        border-color: rgba(255,255,255,0.16) !important;
+      }
+      .text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600 {
+        color: var(--text-primary) !important;
+      }
+      .text-gray-500, .text-gray-400 {
+        color: var(--text-secondary) !important;
+      }
+      input:not([type="checkbox"]),
+      textarea,
+      select,
+      .form-input,
+      .form-textarea,
+      .form-select {
+        background: rgba(255,255,255,0.05) !important;
+        color: var(--text-primary) !important;
+        border-color: rgba(255,255,255,0.12) !important;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(255,255,255,0.55) !important;
+      }
+      .text-gray-600 {
+        color: var(--text-secondary) !important;
+      }
+      .text-gray-500 {
+        color: var(--text-secondary) !important;
+      }
+      .text-gray-400 {
+        color: var(--text-muted) !important;
+      }
+      .text-gray-900 {
+        color: var(--text-primary) !important;
+      }
+      .bg-gray-50, .hover\:bg-gray-50:hover, .bg-gray-100 {
+        background: var(--bg-card) !important;
+      }
+      .border-b.border-gray-200, .border-t.border-gray-200 {
+        border-color: var(--border) !important;
+      }
+      .rounded-lg {
+        background: var(--bg-card) !important;
+      }
+      .dashboard-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        font-weight: 700;
+        font-family: 'Syne', sans-serif;
+        font-size: 1.3rem;
+      }
+     
+      .dashboard-logo-text sub {
+        font-size: 0.65rem;
+        font-weight: 600;
+        margin-left: 2px;
+        color: rgba(255,255,255,0.75);
+        vertical-align: baseline;
+      }
+      .rounded-full.bg-gray-300 {
+        background: #1f2937 !important;
+      }
+      .rounded-full.bg-gradient-to-r {
+        background: linear-gradient(135deg,#7c3aed,#60a5fa) !important;
+      }
+      .text-red-600 {
+        color: #fb7185 !important;
+      }
+      .hover\:bg-red-50:hover {
+        background: rgba(248,113,113,0.18) !important;
+      }
+      .bg-white.border-b.border-gray-200, .bg-white.border-t.border-gray-200 {
+        background: var(--bg-container) !important;
+      }
+      .border-gray-200 { border-color: var(--border) !important; }
+      .bg-gray-200 { background: #1f2937 !important; }
+      .shadow-lg { box-shadow: 0 24px 80px rgba(0,0,0,0.3) !important; }
+      .hover\:bg-gray-100:hover { background: #1f2937 !important; }
+      .text-blue-500 { color: var(--accent-blue) !important; }
+      .text-gray-600 { color: var(--text-secondary) !important; }
+      .text-gray-400 { color: var(--text-secondary) !important; }
+      .text-gray-900 { color: var(--text-primary) !important; }
+      .text-white { color: #fff !important; }
+      .bg-gradient-to-r.from-purple-600.to-blue-600 {
+        background: linear-gradient(135deg,#7c3aed,#60a5fa) !important;
+      }
+      .border-gray-300 { border-color: rgba(255,255,255,0.12) !important; }
+      .hover\:border-blue-500:hover { border-color: rgba(96,165,250,0.7) !important; }
+      
+      /* Button Borders */
+      button, a[class*="px-"][class*="py-"] {
+        border: 1px solid var(--border) !important;
+      }
+      button[class*="bg-gradient"], button.bg-indigo-600, button.bg-red-500, 
+      a[class*="bg-gradient"], a.bg-indigo-600, a.bg-red-500 {
+        border: none !important;
+      }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body>
   
   <div class="flex h-screen overflow-hidden">
     
@@ -17,8 +171,10 @@
       <!-- Logo/Header -->
       <div class="p-4 border-b border-gray-200">
         <div class="flex items-center gap-3 px-2">
-          <div class="rounded-lg  flex items-center justify-center text-white font-bold text-sm">CS</div>
-          <a href="{% url 'Landing' %}"><span class="font-bold text-2xl text-gray-900">ClubSphere</span></a>
+          <a href="{% url 'Landing' %}" class="dashboard-logo">
+            {% comment %} <span class="dashboard-logo-icon">C</span> {% endcomment %}
+            <span class="dashboard-logo-text">ClubSphere<sub>KIT</sub></span>
+          </a>
         </div>
       </div>
 
@@ -44,12 +200,12 @@
         
         <!-- Dropdown Menu -->
         <div id="dashboardMenu" class="hidden mt-2 space-y-1">
-          <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+          <a href="/dashboard" class="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
             <span class="text-blue-500 font-medium">KITCMS</span>
           </a>
-          <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
+          {% comment %} <a href="#" class="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg">
             <span class="text-gray-400">KITADMIN</span>
-          </a>
+          </a> {% endcomment %}
         </div>
             </div>
 
@@ -74,19 +230,36 @@
               <span class="text-sm font-medium">Join to New Club</span>
             </button>
             
-            <button data-section="events" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-              <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+            <button id="eventsDropdown" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-sm font-medium">Events</span>
+              </div>
+              <svg class="w-4 h-4 text-gray-500 transition-transform" id="eventsIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
               </svg>
-              <span class="text-sm font-medium">Events</span>
             </button>
             
-            <button data-section="notes" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+            <!-- Events Submenu -->
+            <div id="eventsMenu" class="hidden ml-8 space-y-1">
+              <button data-section="events-upcoming" class="nav-item w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                Upcoming Events
+              </button>
+              <button data-section="events-registered" class="nav-item w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                Registered Events
+              </button>
+              <button data-section="events-past" class="nav-item w-full text-left px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                Past Events
+              </button>
+            </div>
+
+            <button data-section="media" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
               <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 4a1 1 0 100 2h8a1 1 0 100-2H6zm0 4a1 1 0 100 2h5a1 1 0 100-2H6z"/>
               </svg>
-              <span class="text-sm font-medium">Notes</span>
+              <span class="text-sm font-medium">Media</span>
             </button>
             
             <button data-section="calendar" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
@@ -172,11 +345,15 @@
           
           <!-- User Profile Dropdown -->
           <div class="flex items-center gap-4">
-            <button class="p-2 hover:bg-gray-100 rounded-lg relative">
+            <button id="notificationToggle" type="button" class="p-2 hover:bg-gray-100 rounded-lg relative" onclick="toggleNotificationDrawer()" aria-label="Toggle notifications">
               <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
               </svg>
-              <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              {% if unread_notifications_count and unread_notifications_count > 0 %}
+                <span class="absolute top-1 right-1 min-w-5 h-5 px-1 text-[10px] leading-5 bg-purple-600 text-white rounded-full text-center font-semibold">
+                  {{ unread_notifications_count }}
+                </span>
+              {% endif %}
                     </button>
             
             <!-- User Profile Menu -->
@@ -214,6 +391,87 @@
         </div>
       </header>
 
+      <!-- Notifications Drawer -->
+      <div id="notificationDrawerOverlay" class="hidden fixed inset-0 bg-gray-900/30 z-40" onclick="closeNotificationDrawer()"></div>
+      <aside id="notificationDrawer" class="fixed top-0 right-0 h-full w-96 bg-white border-l border-gray-200 shadow-lg transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+        <div class="p-4 flex items-center justify-between border-b border-gray-200 sticky top-0 bg-white z-10">
+          <h2 class="text-lg font-bold text-gray-900">Notifications</h2>
+          <button type="button" class="p-2 rounded-lg hover:bg-gray-100" onclick="closeNotificationDrawer()" aria-label="Close notifications">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="p-4">
+          {% if unread_notifications_count and unread_notifications_count > 0 %}
+            <div class="mb-3">
+              <span class="px-3 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                {{ unread_notifications_count }} new
+              </span>
+            </div>
+          {% endif %}
+
+          {% if notifications %}
+            <div class="space-y-3">
+              {% for n in notifications %}
+                <div class="p-3 rounded-lg border {% if not n.is_read %}border-purple-300 bg-purple-50{% else %}border-gray-200{% endif %}">
+                  <p class="text-sm font-semibold text-gray-900">{{ n.title }}</p>
+                  <p class="text-sm text-gray-600 mt-1">{{ n.message|truncatewords:22 }}</p>
+                  <p class="text-xs text-gray-500 mt-2">{{ n.created_at|date:"M d, Y H:i" }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-sm text-gray-600">No new notifications.</p>
+          {% endif %}
+
+          <form method="post" action="{% url 'mark_notifications_read' %}" class="mt-4">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-colors"
+              {% if not unread_notifications_count or unread_notifications_count == 0 %}disabled{% endif %}
+            >
+              Mark all as read
+            </button>
+          </form>
+        </div>
+      </aside>
+
+      <script>
+        function openNotificationDrawer() {
+          const drawer = document.getElementById('notificationDrawer');
+          const overlay = document.getElementById('notificationDrawerOverlay');
+          if (!drawer || !overlay) return;
+
+          drawer.classList.remove('translate-x-full');
+          drawer.classList.add('translate-x-0');
+          overlay.classList.remove('hidden');
+        }
+
+        function closeNotificationDrawer() {
+          const drawer = document.getElementById('notificationDrawer');
+          const overlay = document.getElementById('notificationDrawerOverlay');
+          if (!drawer || !overlay) return;
+
+          drawer.classList.add('translate-x-full');
+          drawer.classList.remove('translate-x-0');
+          overlay.classList.add('hidden');
+        }
+
+        function toggleNotificationDrawer() {
+          const drawer = document.getElementById('notificationDrawer');
+          if (!drawer) return;
+
+          if (drawer.classList.contains('translate-x-0')) {
+            closeNotificationDrawer();
+          } else {
+            openNotificationDrawer();
+          }
+        }
+      </script>
+
       <!-- Content Sections -->
         <div class="p-6">
         {% if messages %}
@@ -236,7 +494,7 @@
           {% endfor %}
         </div>
         {% endif %}
-        
+
         <!-- My Clubs Section -->
         <section id="section-my-clubs" class="content-section">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -257,13 +515,13 @@
                     {{ club.members.count }} members
                   </a>
                   <div class="flex items-center gap-2">
-                    <a href="{% url 'view_club_members' club.id %}" class="px-3 py-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+                    <a href="{% url 'view_club_members' club.id %}" class="btn">
                       View Members
                     </a>
                     <form method="post" action="{% url 'leave_club' %}" class="inline">
                       {% csrf_token %}
                       <input type="hidden" name="club_id" value="{{ club.id }}">
-                      <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors">
+                      <button type="submit" class="btn">
                         Leave Club
                       </button>
                     </form>
@@ -278,18 +536,14 @@
               </svg>
               <h3 class="text-lg font-semibold text-gray-900 mb-2">No clubs yet</h3>
               <p class="text-gray-600 mb-4">You haven't joined any clubs yet. Explore available clubs to get started!</p>
-              <button data-section="join-club" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-colors">
-                Browse Clubs
-              </button>
+              <a href="{% url 'dashboard' %}" class="btn">JOIN A CLUB</a>
             </div>
             {% endfor %}
           </div>
-        </section>
 
-        <!-- Pending Applications Section -->
-        {% if pending_applications %}
-        <section id="section-pending-applications" class="content-section">
-          <div class="mb-4">
+          <!-- Pending Applications Section -->
+          {% if pending_applications %}
+          <div class="mt-12 mb-4">
             <h2 class="text-xl font-bold text-gray-900 mb-2">Pending Applications</h2>
             <p class="text-sm text-gray-600">Your applications are being reviewed by the admin</p>
           </div>
@@ -314,8 +568,10 @@
             </div>
             {% endfor %}
           </div>
+          {% endif %}
         </section>
-        {% endif %}
+
+
 
         <!-- Join Club Section -->
         <section id="section-join-club" class="content-section hidden">
@@ -347,11 +603,11 @@
                     Approved
                   </span>
                   {% elif club.application_status == 'rejected' %}
-                  <a href="{% url 'join_club' %}?club_id={{ club.id }}" class="inline-block px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-colors">
+                  <a href="{% url 'join_club' %}?club_id={{ club.id }}" class="btn">
                     Re-apply
                   </a>
                   {% else %}
-                  <a href="{% url 'join_club' %}?club_id={{ club.id }}" class="inline-block px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg transition-colors">
+                  <a href="{% url 'join_club' %}?club_id={{ club.id }}" class="btn">
                     Apply to Join
                   </a>
                   {% endif %}
@@ -366,8 +622,8 @@
                         </div>
         </section>
 
-        <!-- Events Section -->
-        <section id="section-events" class="content-section hidden">
+        <!-- Upcoming Events Section -->
+        <section id="section-events-upcoming" class="content-section hidden">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for event in upcoming_events %}
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
@@ -379,8 +635,13 @@
                 {% endif %}
                     </div>
                     <div class="p-5">
-                <div class="flex items-center gap-2 mb-2">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
                   <span class="px-2 py-1 text-xs font-medium bg-indigo-100 text-indigo-700 rounded">{{ event.club.name }}</span>
+                  {% if event.entry_fee and event.entry_fee > 0 %}
+                  <span class="px-2 py-1 text-xs font-medium bg-amber-100 text-amber-700 rounded">₹{{ event.entry_fee }} entry fee</span>
+                  {% else %}
+                  <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded">Free Event</span>
+                  {% endif %}
                 </div>
                 <h3 class="font-bold text-gray-900 text-lg mb-2">{{ event.title }}</h3>
                 <p class="text-sm text-gray-600 line-clamp-2 mb-3">{{ event.description }}</p>
@@ -397,8 +658,8 @@
                   </svg>
                   <span>{{ event.location }}</span>
                             </div>
-                <button onclick="showRegistrationWarning({{ event.id }}, '{{ event.title }}')" class="w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">
-                  Register for Event
+                <button onclick="showRegistrationWarning({{ event.id }}, '{{ event.title|escapejs }}', {{ event.entry_fee|default:0.00 }}, '{{ event.payment_option }}')" class="btn w-full">
+                  {% if event.entry_fee and event.entry_fee > 0 %}Pay & Register{% else %}Register for Event{% endif %}
                 </button>
                         </div>
                     </div>
@@ -414,8 +675,8 @@
                 </div>
         </section>
 
-        <!-- Notes Section -->
-        <section id="section-notes" class="content-section hidden">
+        <!-- Registered Events Section -->
+        <section id="section-events-registered" class="content-section hidden">
           <div class="mb-6">
             <h2 class="text-xl font-bold text-gray-900 mb-2">My Registered Events</h2>
             <p class="text-sm text-gray-600">Events you have registered for</p>
@@ -424,10 +685,10 @@
           {% if registered_events %}
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for event in registered_events %}
-            <div class="bg-white rounded-xl shadow-sm border border-green-200 overflow-hidden hover:shadow-md transition-shadow">
-              <div class="h-40 bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-sm border border-green-200 overflow-hidden hover:shadow-md transition-all group cursor-pointer" onclick="openRegisteredEventModal({{ event.id }}, '{{ event.title|escapejs }}', '{{ event.description|escapejs }}', '{{ event.start_time|date:"M d, Y • h:i A"|escapejs }}', '{{ event.end_time|date:"M d, Y • h:i A"|escapejs }}', '{{ event.location|escapejs }}', '{{ event.club.name|escapejs }}', '{{ event.event_type|escapejs }}', '{{ event.capacity }}', '{{ event.entry_fee }}')">
+              <div class="h-40 bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center overflow-hidden">
                 {% if event.image %}
-                  <img src="{{ event.image.url }}" class="w-full h-full object-cover" alt="{{ event.title }}">
+                  <img src="{{ event.image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ event.title }}">
                 {% else %}
                   <span class="text-2xl font-bold text-gray-600">{{ event.club.name }}</span>
                 {% endif %}
@@ -435,23 +696,26 @@
               <div class="p-5">
                 <div class="flex items-center gap-2 mb-2">
                   <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded">{{ event.club.name }}</span>
-                  <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded">Registered</span>
+                  <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded">✓ Registered</span>
                 </div>
-                <h3 class="font-bold text-gray-900 text-lg mb-2">{{ event.title }}</h3>
+                <h3 class="font-bold text-gray-900 text-lg mb-2 group-hover:text-indigo-600 transition-colors">{{ event.title }}</h3>
                 <p class="text-sm text-gray-600 line-clamp-2 mb-3">{{ event.description }}</p>
-                <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                  <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                   </svg>
                   <span>{{ event.start_time|date:"M d, Y • h:i A" }}</span>
                 </div>
-                <div class="flex items-center gap-2 text-xs text-gray-500">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                  <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                   </svg>
                   <span>{{ event.location }}</span>
                 </div>
+                <button class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-800 text-gray-800 text-sm font-semibold rounded-full hover:bg-gray-800 hover:text-white transition-all duration-200 shadow-sm">
+                  View Details
+                </button>
               </div>
             </div>
             {% endfor %}
@@ -467,6 +731,68 @@
           {% endif %}
         </section>
 
+        <!-- Past Events Section -->
+        <section id="section-events-past" class="content-section hidden">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Past Events</h2>
+            <p class="text-sm text-gray-600">Events that have already occurred</p>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for event in happened_events %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden opacity-80 grayscale hover:grayscale-0 hover:opacity-100 hover:shadow-md transition-all group">
+              <div class="h-40 bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer" onclick="openPastEventModal({{ event.id }})">
+                {% if event.image %}
+                  <img src="{{ event.image.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ event.title }}">
+                {% else %}
+                  <span class="text-2xl font-bold text-gray-600">{{ event.club.name }}</span>
+                {% endif %}
+              </div>
+              <div class="p-5">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                  <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">{{ event.club.name }}</span>
+                  {% if event.user_registered %}
+                    <span class="px-2 py-1 text-xs font-medium bg-indigo-100 text-indigo-700 rounded">✓ Participated</span>
+                  {% else %}
+                    <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-500 rounded">Completed</span>
+                  {% endif %}
+                </div>
+                <h3 class="font-bold text-gray-900 text-lg mb-1 cursor-pointer hover:text-indigo-600 transition-colors" onclick="openPastEventModal({{ event.id }})">{{ event.title }}</h3>
+                <p class="text-sm text-gray-600 line-clamp-2 mb-3">{{ event.description }}</p>
+                <div class="flex items-center gap-2 text-xs text-gray-500 mb-4">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  <span>{{ event.start_time|date:"M d, Y" }}</span>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                  <button onclick="openPastEventModal({{ event.id }})" class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-800 text-gray-800 text-sm font-semibold rounded-full hover:bg-gray-800 hover:text-white transition-all duration-200 shadow-sm">
+                    View Details
+                  </button>
+                  {% if event.user_registered and not event.user_gave_feedback %}
+                  <button onclick="openPastEventModal({{ event.id }})" class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-indigo-600 text-indigo-600 text-sm font-semibold rounded-full hover:bg-indigo-600 hover:text-white transition-all duration-200 shadow-sm">
+                    ⭐ Give Feedback
+                  </button>
+                  {% elif event.user_registered and event.user_gave_feedback %}
+                  <span class="flex items-center gap-1 px-4 py-2 bg-green-50 border-2 border-green-400 text-green-700 text-sm font-semibold rounded-full">
+                    ✓ Feedback Given
+                  </span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+              <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">No Past Events</h3>
+              <p class="text-gray-600">There are no completed events to show.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
         <!-- Calendar Section -->
         <section id="section-calendar" class="content-section hidden">
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -479,6 +805,154 @@
                         </div>
                     </div>
         </section>
+
+        <section id="section-media" class="content-section hidden">
+          <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-1">Event Media</h2>
+            <p class="text-sm text-gray-600">Click an event to browse its photos and videos.</p>
+          </div>
+
+          {% if participated_events_with_media %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {% for item in participated_events_with_media %}
+              <div onclick="openMediaModal({{ forloop.counter0 }})"
+                class="group bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden cursor-pointer hover:shadow-md hover:border-indigo-200 transition-all duration-200">
+                <!-- Thumbnail strip -->
+                <div class="h-36 bg-gray-100 flex overflow-hidden relative">
+                  {% if item.photos %}
+                    <img src="{{ item.photos.0.file.url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ item.event.title }}">
+                  {% elif item.videos %}
+                    <div class="w-full h-full bg-gray-800 flex items-center justify-center">
+                      <svg class="w-12 h-12 text-white opacity-70" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                  {% endif %}
+                  <!-- Media count badge -->
+                  <div class="absolute bottom-2 right-2 flex gap-1">
+                    {% if item.photos %}
+                    <span class="px-2 py-0.5 bg-black/60 text-white text-xs rounded-full backdrop-blur-sm flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      {{ item.photos|length }}
+                    </span>
+                    {% endif %}
+                    {% if item.videos %}
+                    <span class="px-2 py-0.5 bg-black/60 text-white text-xs rounded-full backdrop-blur-sm flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      {{ item.videos|length }}
+                    </span>
+                    {% endif %}
+                  </div>
+                </div>
+                <!-- Card info -->
+                <div class="p-4">
+                  <p class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ item.event.title }}</p>
+                  <p class="text-xs text-gray-500 mt-0.5">{{ item.event.club.name }} · {{ item.event.start_time|date:"M d, Y" }}</p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Hidden data for JS -->
+            <script id="mediaData" type="application/json">
+              [
+                {% for item in participated_events_with_media %}
+                {
+                  "title": "{{ item.event.title|escapejs }}",
+                  "club": "{{ item.event.club.name|escapejs }}",
+                  "date": "{{ item.event.start_time|date:'M d, Y'|escapejs }}",
+                  "photos": [{% for p in item.photos %}{"url": "{{ p.file.url|escapejs }}", "title": "{{ p.title|default:'Photo'|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}],
+                  "videos": [{% for v in item.videos %}{"url": "{{ v.file.url|escapejs }}", "title": "{{ v.title|default:'Video'|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]
+                }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+              ]
+            </script>
+
+          {% else %}
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-14 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-base font-semibold text-gray-900 mb-1">No Media Yet</h3>
+            <p class="text-gray-500 text-sm">Photos and videos from events you participated in will appear here.</p>
+          </div>
+          {% endif %}
+
+          {% if can_upload_media %}
+          <div class="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h4 class="text-base font-bold text-gray-900 mb-4">Upload Event Media</h4>
+            <form method="post" action="{% url 'admin_dashboard' %}" enctype="multipart/form-data" class="space-y-4">
+              {% csrf_token %}
+              <input type="hidden" name="form_type" value="media_upload">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Event</label>
+                  <select name="event_id" class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200" required>
+                    <option value="">Select an event</option>
+                    {% for event in events_for_media %}
+                    <option value="{{ event.id }}">{{ event.title }} — {{ event.club.name }}</option>
+                    {% empty %}
+                    <option value="">No available events</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <input type="text" name="title" maxlength="200" placeholder="Optional title" class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">File</label>
+                <input type="file" name="media_file" accept="image/*,video/*" class="w-full rounded-xl border border-gray-300 bg-white px-4 py-3" required>
+              </div>
+              <div class="flex justify-end">
+                <button type="submit" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-colors">Upload</button>
+              </div>
+            </form>
+          </div>
+          {% endif %}
+        </section>
+
+        <!-- ===== Media Viewer Modal ===== -->
+        <div id="mediaViewerModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div class="relative bg-[#111827] w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden" style="border-radius:1.25rem">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700/60 flex-shrink-0">
+              <div>
+                <p id="mvClub" class="text-xs text-indigo-400 font-mono uppercase tracking-widest mb-0.5"></p>
+                <h3 id="mvTitle" class="text-lg font-bold text-white"></h3>
+              </div>
+              <button onclick="closeMediaModal()" class="text-gray-400 hover:text-white transition-colors bg-gray-800 rounded-full p-2 flex-shrink-0 ml-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+
+            <!-- Scrollable body -->
+            <div class="overflow-y-auto flex-1 px-6 py-5 space-y-8">
+
+              <!-- Photos -->
+              <div id="mvPhotosSection">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  Photos <span id="mvPhotoCount" class="text-gray-600 font-normal normal-case tracking-normal"></span>
+                </h4>
+                <div id="mvPhotoGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
+                <p id="mvNoPhotos" class="hidden text-sm text-gray-500 italic">No photos for this event.</p>
+              </div>
+
+              <!-- Videos -->
+              <div id="mvVideosSection">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  Videos <span id="mvVideoCount" class="text-gray-600 font-normal normal-case tracking-normal"></span>
+                </h4>
+                <div id="mvVideoGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <p id="mvNoVideos" class="hidden text-sm text-gray-500 italic">No videos for this event.</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
 
         <!-- Profile Section -->
         <section id="section-profile" class="content-section hidden">
@@ -570,7 +1044,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
-                    <select name="course" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white">
+                    <select name="course" class="w-full px-4 py-2.5 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-indigo-50">
                       <option value="">Select Course</option>
                       <option value="btech" {% if request.user.course == 'btech' %}selected{% endif %}>B.Tech</option>
                       <option value="mtech" {% if request.user.course == 'mtech' %}selected{% endif %}>M.Tech</option>
@@ -586,7 +1060,7 @@
                   
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
-                    <select name="year" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white">
+                    <select name="year" class="w-full px-4 py-2.5 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors bg-indigo-50">
                       <option value="">Select Year</option>
                       <option value="1" {% if request.user.year == '1' %}selected{% endif %}>First Year</option>
                       <option value="2" {% if request.user.year == '2' %}selected{% endif %}>Second Year</option>
@@ -628,7 +1102,7 @@
           {% if messages %}
           <div class="mt-6 space-y-3">
             {% for message in messages %}
-            <div class="p-4 rounded-lg flex items-start gap-3 {% if message.tags == 'success' %}bg-green-50 border border-green-200{% elif message.tags == 'error' %}bg-red-50 border border-red-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
+            <div data-flash-message class="p-4 rounded-lg flex items-start gap-3 {% if message.tags == 'success' %}bg-green-50 border border-green-200{% elif message.tags == 'error' %}bg-red-50 border border-red-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
               <svg class="w-5 h-5 flex-shrink-0 mt-0.5 {% if message.tags == 'success' %}text-green-500{% elif message.tags == 'error' %}text-red-500{% else %}text-blue-500{% endif %}" fill="currentColor" viewBox="0 0 20 20">
                 {% if message.tags == 'success' %}
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -652,21 +1126,23 @@
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-6">Account Settings</h3>
             
-            <div class="space-y-6">
+            <form method="post" action="{% url 'notification_preferences' %}" class="space-y-6">
+              {% csrf_token %}
+              <div class="space-y-6">
               <!-- Email Preferences -->
               <div class="pb-6 border-b border-gray-200">
                 <h4 class="text-sm font-semibold text-gray-900 mb-3">Email Notifications</h4>
                 <div class="space-y-3">
                   <label class="flex items-center">
-                    <input type="checkbox" checked class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
+                    <input type="checkbox" name="email_event_notifications" {% if request.user.email_event_notifications %}checked{% endif %} class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
                     <span class="ml-3 text-sm text-gray-700">Receive event notifications</span>
                   </label>
                   <label class="flex items-center">
-                    <input type="checkbox" checked class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
+                    <input type="checkbox" disabled class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500" checked>
                     <span class="ml-3 text-sm text-gray-700">Receive club updates</span>
                   </label>
                   <label class="flex items-center">
-                    <input type="checkbox" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
+                    <input type="checkbox" disabled class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
                     <span class="ml-3 text-sm text-gray-700">Receive newsletter</span>
                   </label>
                 </div>
@@ -677,11 +1153,11 @@
                 <h4 class="text-sm font-semibold text-gray-900 mb-3">Privacy</h4>
                 <div class="space-y-3">
                   <label class="flex items-center">
-                    <input type="checkbox" checked class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
+                    <input type="checkbox" disabled checked class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
                     <span class="ml-3 text-sm text-gray-700">Show profile to other members</span>
                   </label>
                   <label class="flex items-center">
-                    <input type="checkbox" checked class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
+                    <input type="checkbox" disabled checked class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500">
                     <span class="ml-3 text-sm text-gray-700">Allow event organizers to contact me</span>
                   </label>
                     </div>
@@ -695,7 +1171,17 @@
                 </button>
                 <p class="text-xs text-gray-500 mt-2">This action cannot be undone.</p>
               </div>
-            </div>
+              </div>
+
+              <div class="pt-6 border-t border-gray-200 flex justify-end">
+                <button
+                  type="submit"
+                  class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-colors shadow-sm"
+                >
+                  Save Notification Preferences
+                </button>
+              </div>
+            </form>
           </div>
         </section>
 
@@ -762,8 +1248,8 @@
   </div>
 
   <!-- Profile Card Modal -->
-  <div id="profileCardModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-10 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-lg bg-white mb-10">
+  <div id="profileCardModal" class="hidden fixed inset-0 bg-gray-950 bg-opacity-95 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-6 border w-full max-w-3xl shadow-2xl rounded-3xl bg-[#111827] mb-10">
       <div class="mt-3">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-bold text-gray-900">Profile Card</h3>
@@ -785,9 +1271,169 @@
     </div>
   </div>
 
+  <!-- Registered Event Details Modal -->
+  <div id="registeredEventModal" class="hidden fixed inset-0 bg-gray-950 bg-opacity-90 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+    <div class="relative w-full max-w-lg bg-[#111827] shadow-2xl overflow-hidden">
+
+      <div class="p-6">
+        <!-- Header -->
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <p id="remClubName" class="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-1 font-mono"></p>
+            <h3 id="remTitle" class="text-2xl font-bold text-white leading-tight"></h3>
+          </div>
+          <button onclick="closeRegisteredEventModal()" class="ml-4 mt-1 text-gray-500 hover:text-white transition-colors flex-shrink-0 bg-gray-800 rounded-full p-1.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Registration badge -->
+        <div class="flex flex-wrap gap-2 mb-5">
+          <span class="px-3 py-1 bg-green-900/50 text-green-400 border border-green-700/50 text-xs font-semibold rounded-full">✓ You are Registered</span>
+          <span id="remType" class="px-3 py-1 bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 text-xs font-semibold rounded-full capitalize"></span>
+        </div>
+
+        <!-- Description -->
+        <p id="remDescription" class="text-sm text-gray-400 mb-5 leading-relaxed border-l-2 border-indigo-600 pl-3"></p>
+
+        <!-- Details grid -->
+        <div class="grid grid-cols-1 gap-3 mb-5">
+          <div class="flex items-center gap-3 bg-gray-800/60 rounded-xl px-4 py-3">
+            <div class="text-indigo-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 font-medium">Starts</p>
+              <p id="remStart" class="text-sm text-gray-200 font-semibold"></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 bg-gray-800/60 rounded-xl px-4 py-3">
+            <div class="text-pink-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 font-medium">Ends</p>
+              <p id="remEnd" class="text-sm text-gray-200 font-semibold"></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 bg-gray-800/60 rounded-xl px-4 py-3">
+            <div class="text-yellow-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 font-medium">Location</p>
+              <p id="remLocation" class="text-sm text-gray-200 font-semibold"></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 bg-gray-800/60 rounded-xl px-4 py-3">
+            <div class="text-emerald-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 font-medium">Capacity</p>
+              <p id="remCapacity" class="text-sm text-gray-200 font-semibold"></p>
+            </div>
+          </div>
+          <div id="remFeeRow" class="flex items-center gap-3 bg-gray-800/60 rounded-xl px-4 py-3">
+            <div class="text-amber-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 font-medium">Entry Fee</p>
+              <p id="remFee" class="text-sm text-gray-200 font-semibold"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Close button -->
+        <button onclick="closeRegisteredEventModal()" class="w-full px-4 py-3 bg-white border-2 border-gray-700 text-gray-900 text-sm font-bold rounded-full hover:bg-gray-100 transition-all duration-200">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Past Event Details & Feedback Modal -->
+  <div id="pastEventModal" class="hidden fixed inset-0 bg-gray-950 bg-opacity-95 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-6 border w-full max-w-4xl shadow-2xl rounded-3xl bg-[#111827] mb-10">
+      <div class="mt-3">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-white" id="pastEventModalTitle">Past Event Details</h3>
+          <button onclick="closePastEventModal()" class="text-gray-400 hover:text-white transition-colors">
+            <svg class="w-8 h-8 bg-gray-800 rounded-full p-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div id="pastEventContent" class="space-y-6">
+          <!-- Loading state -->
+          <div class="text-center py-8" id="pastEventLoading">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <p class="mt-2 text-gray-400 font-medium">Loading details...</p>
+          </div>
+          
+          <div id="pastEventData" class="hidden">
+            <div class="bg-gray-800 rounded-xl p-5 mb-6 text-white border border-gray-700">
+              <h4 class="text-2xl font-bold mb-2" id="peTitle"></h4>
+              <p class="text-indigo-400 tracking-wide text-sm mb-4 font-semibold uppercase font-mono" id="peClubTimeLocation"></p>
+              <p class="text-gray-300" id="peDescription"></p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Feedback Display Section -->
+              <div class="bg-gray-800 rounded-xl p-5 border border-gray-700 h-[400px] flex flex-col">
+                <h4 class="text-xl font-bold text-white mb-4">Event Feedback</h4>
+                <div id="peFeedbackList" class="space-y-4 overflow-y-auto flex-1 pr-2">
+                  <!-- Feedbacks injected here via JS -->
+                </div>
+              </div>
+              
+              <!-- Submit Feedback Section -->
+              <div class="bg-gray-800 rounded-xl p-5 border border-gray-700 flex flex-col justify-center" id="peSubmitFeedbackSection">
+                <h4 class="text-xl font-bold text-white mb-2">Leave a Review</h4>
+                <p class="text-sm text-gray-400 mb-6" id="peSubmitNotice">You can leave feedback for this event.</p>
+                <form id="peFeedbackForm" onsubmit="submitEventFeedback(event)">
+                  {% csrf_token %}
+                  <input type="hidden" id="peEventId" name="event_id">
+                  
+                  <div class="mb-4 text-left">
+                    <label class="block text-sm font-medium text-gray-300 mb-1 tracking-wide">Rating</label>
+                    <select id="peRating" name="rating" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-3 text-white outline-none focus:ring-2 focus:ring-indigo-500 appearance-none">
+                      <option value="">Select a rating (1-5)</option>
+                      <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                      <option value="4">⭐⭐⭐⭐ - Good</option>
+                      <option value="3">⭐⭐⭐ - Ok</option>
+                      <option value="2">⭐⭐ - Poor</option>
+                      <option value="1">⭐ - Terrible</option>
+                    </select>
+                  </div>
+                  
+                  <div class="mb-6 text-left">
+                    <label class="block text-sm font-medium text-gray-300 mb-1 tracking-wide">Comment (Optional)</label>
+                    <textarea id="peComment" name="comment" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-3 text-white outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Tell us what you thought..."></textarea>
+                  </div>
+                  
+                  <button type="submit" id="peSubmitBtn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all transform hover:scale-[1.02]">
+                    Submit Feedback
+                  </button>
+                  <p id="peFeedbackSuccess" class="hidden bg-green-900/40 text-green-400 rounded-lg p-3 text-sm font-medium mt-4 text-center border border-green-800/50">Feedback successfully submitted!</p>
+                  <p id="peFeedbackError" class="hidden bg-red-900/40 text-red-400 rounded-lg p-3 text-sm font-medium mt-4 text-center border border-red-800/50"></p>
+                </form>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Event Registration Warning Modal -->
-  <div id="registrationWarningModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+  <div id="registrationWarningModal" class="hidden fixed inset-0 bg-gray-950 bg-opacity-95 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-6 border w-full max-w-md shadow-2xl rounded-3xl bg-[#111827]">
       <div class="mt-3 text-center">
         <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100">
           <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -799,6 +1445,7 @@
           <p class="text-sm text-gray-500 mb-3">
             You are about to register for: <strong id="eventNameWarning"></strong>
           </p>
+          <p id="eventFeeWarning" class="text-sm text-gray-700 mb-3 hidden"></p>
           <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
             <p class="text-sm text-yellow-800 font-semibold mb-2">⚠️ Important Notice:</p>
             <ul class="text-xs text-yellow-700 space-y-1 list-disc list-inside">
@@ -807,6 +1454,16 @@
               <li>Please ensure you can attend before registering</li>
               <li>Only register if you are certain you can participate</li>
             </ul>
+          </div>
+          <div id="paymentMethodRow" class="mt-4 hidden">
+            <label for="paymentMethod" class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+            <select id="paymentMethod" name="payment_method" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-indigo-50">
+              <option value="Credit/Debit Card">Credit/Debit Card</option>
+              <option value="UPI">UPI</option>
+              <option value="Wallet">Wallet</option>
+              <option value="Pay at Event">Pay at Event</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-1">Choose how you want to pay for this event.</p>
           </div>
         </div>
         <div class="flex gap-4 px-4 py-3">
@@ -837,8 +1494,10 @@
       const sectionData = {
         'my-clubs': { title: 'My Clubs', subtitle: 'Manage your club memberships' },
         'join-club': { title: 'Join New Club', subtitle: 'Discover and join new clubs' },
-        'events': { title: 'Events', subtitle: 'Upcoming events from your clubs' },
-        'notes': { title: 'Notes', subtitle: 'Your personal notes' },
+        'events-upcoming': { title: 'Upcoming Events', subtitle: 'Upcoming events from your clubs' },
+        'events-registered': { title: 'Registered Events', subtitle: 'Events you have registered for' },
+        'events-past': { title: 'Happened Events', subtitle: 'Events that have already occurred' },
+        'media': { title: 'Media', subtitle: 'Browse event photos and videos' },
         'calendar': { title: 'Calendar', subtitle: 'View all your events' },
         'profile': { title: 'Profile', subtitle: 'Update your personal information' },
         'account-settings': { title: 'Account Settings', subtitle: 'Manage your account preferences' },
@@ -884,6 +1543,20 @@
       
       // Show default section
       showSection('my-clubs');
+    })();
+    
+    // Events dropdown functionality
+    (function() {
+      const dropdownBtn = document.getElementById('eventsDropdown');
+      const dropdownMenu = document.getElementById('eventsMenu');
+      const dropdownIcon = document.getElementById('eventsIcon');
+      
+      if (dropdownBtn && dropdownMenu) {
+        dropdownBtn.addEventListener('click', function() {
+          dropdownMenu.classList.toggle('hidden');
+          dropdownIcon.style.transform = dropdownMenu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+        });
+      }
     })();
     
     // Dashboard dropdown functionality
@@ -1203,14 +1876,33 @@
     });
 
     // Event Registration Warning Modal Functions
-    function showRegistrationWarning(eventId, eventTitle) {
+    function showRegistrationWarning(eventId, eventTitle, eventFee, paymentOption) {
       const modal = document.getElementById('registrationWarningModal');
       const eventNameEl = document.getElementById('eventNameWarning');
       const eventIdEl = document.getElementById('confirmEventId');
-      
-      if (modal && eventNameEl && eventIdEl) {
+      const eventFeeEl = document.getElementById('eventFeeWarning');
+      const paymentMethodRow = document.getElementById('paymentMethodRow');
+      const paymentMethodSelect = document.getElementById('paymentMethod');
+
+      if (modal && eventNameEl && eventIdEl && eventFeeEl && paymentMethodRow && paymentMethodSelect) {
         eventNameEl.textContent = eventTitle;
         eventIdEl.value = eventId;
+
+        if (eventFee && Number(eventFee) > 0) {
+          eventFeeEl.textContent = `Entry fee: ₹${Number(eventFee).toFixed(2)}.`;
+          eventFeeEl.classList.remove('hidden');
+          paymentMethodRow.classList.remove('hidden');
+          if (paymentOption === 'onsite') {
+            paymentMethodSelect.value = 'Pay at Event';
+          } else {
+            paymentMethodSelect.value = 'Credit/Debit Card';
+          }
+        } else {
+          eventFeeEl.classList.add('hidden');
+          paymentMethodRow.classList.add('hidden');
+          paymentMethodSelect.value = 'Credit/Debit Card';
+        }
+
         modal.classList.remove('hidden');
       }
     }
@@ -1233,6 +1925,286 @@
         });
       }
     });
+    // Past Event Modal Functions
+    function openPastEventModal(eventId) {
+      const modal = document.getElementById('pastEventModal');
+      const loading = document.getElementById('pastEventLoading');
+      const dataContainer = document.getElementById('pastEventData');
+      
+      modal.classList.remove('hidden');
+      loading.classList.remove('hidden');
+      dataContainer.classList.add('hidden');
+      
+      // Clear forms and messages
+      document.getElementById('peFeedbackForm').reset();
+      document.getElementById('peFeedbackSuccess').classList.add('hidden');
+      document.getElementById('peFeedbackError').classList.add('hidden');
+      document.getElementById('peEventId').value = eventId;
+      
+      fetch(`/dashboard/past-event/${eventId}/`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert(data.error);
+            closePastEventModal();
+            return;
+          }
+          
+          document.getElementById('peTitle').textContent = data.title;
+          document.getElementById('peClubTimeLocation').textContent = `${data.club_name} • ${data.start_time} • ${data.location}`;
+          document.getElementById('peDescription').textContent = data.description;
+          
+          const feedbackList = document.getElementById('peFeedbackList');
+          feedbackList.innerHTML = '';
+          
+          if (data.feedbacks && data.feedbacks.length > 0) {
+            data.feedbacks.forEach(fb => {
+              const stars = '⭐'.repeat(fb.rating);
+              const el = document.createElement('div');
+              el.className = 'bg-gray-700/50 rounded-lg p-4 border border-gray-600';
+              el.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                  <span class="font-semibold text-indigo-300">${fb.user_name}</span>
+                  <span class="text-xs text-gray-400">${fb.submitted_at}</span>
+                </div>
+                <div class="mb-2 tracking-widest text-sm">${stars}</div>
+                <p class="text-sm text-gray-300">${fb.comment}</p>
+              `;
+              feedbackList.appendChild(el);
+            });
+          } else {
+            feedbackList.innerHTML = '<p class="text-gray-500 text-sm italic py-4 text-center">No feedback has been submitted for this event yet.</p>';
+          }
+          
+          const submitSection = document.getElementById('peSubmitFeedbackSection');
+          if (data.can_give_feedback) {
+            submitSection.classList.remove('hidden');
+          } else {
+            submitSection.classList.add('hidden');
+          }
+          
+          loading.classList.add('hidden');
+          dataContainer.classList.remove('hidden');
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Failed to load event details.');
+          closePastEventModal();
+        });
+    }
+
+    function closePastEventModal() {
+      const modal = document.getElementById('pastEventModal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function submitEventFeedback(e) {
+      e.preventDefault();
+      
+      const form = document.getElementById('peFeedbackForm');
+      const eventId = document.getElementById('peEventId').value;
+      const formData = new FormData(form);
+      const submitBtn = document.getElementById('peSubmitBtn');
+      const successMsg = document.getElementById('peFeedbackSuccess');
+      const errorMsg = document.getElementById('peFeedbackError');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      successMsg.classList.add('hidden');
+      errorMsg.classList.add('hidden');
+      
+      fetch(`/dashboard/past-event/${eventId}/feedback/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Feedback';
+        
+        if (data.error) {
+          errorMsg.textContent = data.error;
+          errorMsg.classList.remove('hidden');
+        } else {
+          successMsg.classList.remove('hidden');
+          form.reset();
+          
+          // Add the new feedback to the top of the list dynamically
+          const feedbackList = document.getElementById('peFeedbackList');
+          // If empty message is there, clear it
+          if (feedbackList.innerHTML.includes('No feedback')) {
+            feedbackList.innerHTML = '';
+          }
+          
+          const fb = data.feedback;
+          const stars = '⭐'.repeat(fb.rating);
+          const el = document.createElement('div');
+          el.className = 'bg-indigo-900/40 rounded-lg p-4 border border-indigo-700/50 mb-4 animate-pulse';
+          el.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+              <span class="font-semibold text-indigo-300">${fb.user_name}</span>
+              <span class="text-xs text-indigo-400">Just now</span>
+            </div>
+            <div class="mb-2 tracking-widest text-sm">${stars}</div>
+            <p class="text-sm text-gray-300">${fb.comment}</p>
+          `;
+          feedbackList.prepend(el);
+          
+          setTimeout(() => {
+            el.classList.remove('animate-pulse');
+          }, 3000);
+          
+          // Hide feedback section so they can't submit twice
+          setTimeout(() => {
+             document.getElementById('peSubmitFeedbackSection').classList.add('hidden');
+          }, 2000);
+        }
+      })
+      .catch(err => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Feedback';
+        errorMsg.textContent = 'A network error occurred. Please try again.';
+        errorMsg.classList.remove('hidden');
+      });
+    }
+
+    // Close past event modal on outside click
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('pastEventModal');
+      if (modal && event.target === modal) {
+        closePastEventModal();
+      }
+    });
+
+    // Registered Event Modal Functions
+    function openRegisteredEventModal(id, title, description, startTime, endTime, location, clubName, eventType, capacity, entryFee) {
+      document.getElementById('remTitle').textContent = title;
+      document.getElementById('remClubName').textContent = clubName;
+      document.getElementById('remDescription').textContent = description;
+      document.getElementById('remStart').textContent = startTime;
+      document.getElementById('remEnd').textContent = endTime;
+      document.getElementById('remLocation').textContent = location;
+      document.getElementById('remType').textContent = eventType;
+      document.getElementById('remCapacity').textContent = capacity > 0 ? capacity + ' seats' : 'Open';
+      
+      const feeRow = document.getElementById('remFeeRow');
+      const feeEl = document.getElementById('remFee');
+      if (entryFee && parseFloat(entryFee) > 0) {
+        feeEl.textContent = '₹' + parseFloat(entryFee).toFixed(2);
+        feeRow.classList.remove('hidden');
+      } else {
+        feeRow.classList.add('hidden');
+      }
+
+      document.getElementById('registeredEventModal').classList.remove('hidden');
+    }
+
+    function closeRegisteredEventModal() {
+      document.getElementById('registeredEventModal').classList.add('hidden');
+    }
+
+    // Close registered event modal on outside click
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('registeredEventModal');
+      if (modal && e.target === modal) {
+        closeRegisteredEventModal();
+      }
+    });
+
+    // Media Viewer Modal
+    let _mediaData = null;
+    function getMediaData() {
+      if (!_mediaData) {
+        const el = document.getElementById('mediaData');
+        _mediaData = el ? JSON.parse(el.textContent) : [];
+      }
+      return _mediaData;
+    }
+
+    function openMediaModal(index) {
+      const data = getMediaData();
+      if (!data || !data[index]) return;
+      const item = data[index];
+
+      document.getElementById('mvTitle').textContent = item.title;
+      document.getElementById('mvClub').textContent = item.club;
+
+      const photoGrid = document.getElementById('mvPhotoGrid');
+      const noPhotos = document.getElementById('mvNoPhotos');
+      const photoCount = document.getElementById('mvPhotoCount');
+      photoGrid.innerHTML = '';
+
+      if (item.photos && item.photos.length > 0) {
+        photoCount.textContent = '(' + item.photos.length + ')';
+        noPhotos.classList.add('hidden');
+        item.photos.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'group relative overflow-hidden rounded-xl bg-gray-800 border border-gray-700';
+          div.innerHTML = `
+            <a href="${p.url}" target="_blank">
+              <img src="${p.url}" alt="${p.title}" class="h-32 w-full object-cover group-hover:scale-105 transition-transform duration-300">
+            </a>
+            <div class="p-2 flex items-center justify-between">
+              <span class="text-xs text-gray-400 truncate">${p.title}</span>
+              <a href="${p.url}" download class="text-xs text-indigo-400 hover:text-indigo-300 flex-shrink-0 ml-2">↓</a>
+            </div>
+          `;
+          photoGrid.appendChild(div);
+        });
+      } else {
+        photoCount.textContent = '';
+        noPhotos.classList.remove('hidden');
+      }
+
+      const videoGrid = document.getElementById('mvVideoGrid');
+      const noVideos = document.getElementById('mvNoVideos');
+      const videoCount = document.getElementById('mvVideoCount');
+      videoGrid.innerHTML = '';
+
+      if (item.videos && item.videos.length > 0) {
+        videoCount.textContent = '(' + item.videos.length + ')';
+        noVideos.classList.add('hidden');
+        item.videos.forEach(v => {
+          const div = document.createElement('div');
+          div.className = 'overflow-hidden rounded-xl bg-gray-800 border border-gray-700';
+          div.innerHTML = `
+            <video controls class="w-full max-h-52 bg-black rounded-t-xl">
+              <source src="${v.url}" type="video/mp4">
+              Your browser does not support video.
+            </video>
+            <div class="p-2 flex items-center justify-between">
+              <span class="text-xs text-gray-400 truncate">${v.title}</span>
+              <a href="${v.url}" download class="text-xs text-indigo-400 hover:text-indigo-300 flex-shrink-0 ml-2">↓ Download</a>
+            </div>
+          `;
+          videoGrid.appendChild(div);
+        });
+      } else {
+        videoCount.textContent = '';
+        noVideos.classList.remove('hidden');
+      }
+
+      document.getElementById('mediaViewerModal').classList.remove('hidden');
+    }
+
+    function closeMediaModal() {
+      document.getElementById('mediaViewerModal').classList.add('hidden');
+      // Stop all playing videos
+      document.getElementById('mvVideoGrid').querySelectorAll('video').forEach(v => v.pause());
+    }
+
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('mediaViewerModal');
+      if (modal && e.target === modal) closeMediaModal();
+    });
+
   </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>

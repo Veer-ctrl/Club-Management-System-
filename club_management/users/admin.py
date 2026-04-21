@@ -8,7 +8,8 @@ class CustomUserAdmin(UserAdmin):
 
     # Columns shown in the user list
     list_display = (
-        'personal_email', 'username', 'role', 'course', 'year',
+        'personal_email', 'username', 'role', 'assigned_club', 'email_event_notifications',
+        'course', 'year',
         'branch', 'enrollment_number', 'is_staff', 'is_active'
     )
     
@@ -20,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('personal_email', 'password')}),
         ('Personal Info', {'fields': ('username', 'first_name', 'last_name', 'phone', 'profile_picture')}),
         ('Academic Info', {'fields': ('college_email', 'course', 'year', 'branch', 'enrollment_number')}),
-        ('Role & Permissions', {'fields': ('role', 'is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Role & Permissions', {'fields': ('role', 'assigned_club', 'email_event_notifications', 'is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important Dates', {'fields': ('last_login', 'date_joined')}),
     )
 
@@ -29,7 +30,8 @@ class CustomUserAdmin(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'personal_email', 'username', 'role', 'password1', 'password2',
+                'personal_email', 'username', 'role', 'assigned_club', 'email_event_notifications',
+                'password1', 'password2',
                 'course', 'year', 'branch', 'enrollment_number', 'is_staff', 'is_active'
             ),
         }),

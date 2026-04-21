@@ -4,391 +4,833 @@
 
 {% block breadcrumb %}{% endblock %}
 
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  :root {
+    --bg-outer:      #0b0b12;
+    --bg-container:  #050509;
+    --bg-card:       rgba(255,255,255,0.03);
+    --bg-card-hover: rgba(255,255,255,0.055);
+    --border:        rgba(255,255,255,0.06);
+    --border-hover:  rgba(255,255,255,0.13);
+    --text-primary:  #f4f4f6;
+    --text-secondary:#71717a;
+    --text-muted:    #3f3f46;
+    --accent-green:  #22c55e;
+    --accent-blue:   #60a5fa;
+    --accent-purple: #a78bfa;
+    --accent-orange: #fb923c;
+    --radius-card:   16px;
+    --radius-pill:   999px;
+    --gap:           20px;
+    --tr:            0.22s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── Page background ── */
+  body, .admin-body, #main-content {
+    background: var(--bg-outer) !important;
+    font-family: 'Sora', sans-serif !important;
+  }
+
+  /* ── Dashboard wrapper ── */
+  #dashboard-content {
+    background: var(--bg-container);
+    border-radius: 20px;
+    padding: 28px 32px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Stat cards ── */
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 22px 24px;
+    transition: transform var(--tr), border-color var(--tr), box-shadow var(--tr);
+    cursor: default;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px) scale(1.01);
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .stat-label {
+    font-size: 0.72rem; font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin: 0 0 10px; line-height: 1;
+  }
+  .stat-value {
+    font-size: 2.4rem; font-weight: 700;
+    color: var(--text-primary); line-height: 1;
+    margin: 0 0 10px;
+  }
+  .stat-sub {
+    font-size: 0.7rem; font-weight: 600; margin: 0;
+  }
+  .stat-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-icon svg { width: 22px; height: 22px; }
+
+  /* ── Section cards ── */
+  .section-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 22px 24px;
+    transition: border-color var(--tr);
+  }
+  .section-card:hover { border-color: var(--border-hover); }
+  .section-card-title {
+    font-size: 0.95rem; font-weight: 600;
+    color: var(--text-primary); margin: 0;
+    font-family: 'Sora', sans-serif;
+  }
+  .view-all {
+    font-size: 0.75rem; color: var(--accent-blue);
+    text-decoration: none; font-weight: 500; opacity: 0.85;
+    transition: opacity var(--tr);
+  }
+  .view-all:hover { opacity: 1; }
+
+  /* ── List rows ── */
+  .list-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border-radius: 10px;
+    transition: background var(--tr);
+  }
+  .list-row:hover { background: rgba(255,255,255,0.04); }
+  .list-avatar {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--text-primary); overflow: hidden; flex-shrink: 0;
+  }
+  .list-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .list-name { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); margin: 0; }
+  .list-sub  { font-size: 0.7rem; color: var(--text-secondary); margin: 2px 0 0; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: var(--radius-pill);
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .badge-green  { background: rgba(34,197,94,0.12);   color: #4ade80; }
+  .badge-blue   { background: rgba(96,165,250,0.12);  color: #93c5fd; }
+  .badge-yellow { background: rgba(250,204,21,0.12);  color: #fde047; }
+  .badge-red    { background: rgba(248,113,113,0.12); color: #fca5a5; }
+  .badge-gray   { background: rgba(161,161,170,0.1);  color: #a1a1aa; }
+
+  /* ── Table ── */
+  .dark-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.82rem; font-family: 'Sora', sans-serif;
+  }
+  .dark-table thead th {
+    padding: 10px 16px; font-size: 0.68rem; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    text-align: left; background: transparent;
+  }
+  .dark-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: background var(--tr); cursor: pointer;
+  }
+  .dark-table tbody tr:hover { background: rgba(255,255,255,0.035); }
+  .dark-table tbody td { padding: 13px 16px; color: var(--text-primary); }
+  .dark-table tbody td.muted { color: var(--text-secondary); }
+
+  /* ── Quick action buttons ── */
+  .quick-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 13px 20px; border-radius: var(--radius-pill);
+    font-size: 0.8rem; font-weight: 600;
+    text-decoration: none; border: 1px solid var(--border);
+    transition: all var(--tr); font-family: 'Sora', sans-serif;
+  }
+  .quick-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .quick-blue   { background: rgba(96,165,250,0.07);  color: #93c5fd; }
+  .quick-blue:hover   { background: rgba(96,165,250,0.14);  border-color: rgba(96,165,250,0.3); }
+  .quick-purple { background: rgba(167,139,250,0.07); color: #c4b5fd; }
+  .quick-purple:hover { background: rgba(167,139,250,0.14); border-color: rgba(167,139,250,0.3); }
+  .quick-orange { background: rgba(251,146,60,0.07);  color: #fdba74; }
+  .quick-orange:hover { background: rgba(251,146,60,0.14);  border-color: rgba(251,146,60,0.3); }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center; padding: 32px 0;
+    color: var(--text-muted); font-size: 0.82rem;
+  }
+
+  /* ── Profile / secondary sections ── */
+  #section-profile,
+  #section-change-password,
+  #section-2fa {
+    background: var(--bg-container);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    margin-top: 24px;
+  }
+  .section-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-header-title {
+    font-size: 1rem; font-weight: 600;
+    color: var(--text-primary); margin: 0;
+  }
+  .section-header-sub {
+    font-size: 0.78rem; color: var(--text-secondary); margin: 4px 0 0;
+  }
+  .back-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 16px; font-size: 0.78rem; font-weight: 500;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    color: var(--text-secondary); cursor: pointer;
+    transition: all var(--tr); font-family: 'Sora', sans-serif;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.09); color: var(--text-primary); }
+  .back-btn svg { width: 14px; height: 14px; }
+
+  /* Form inputs inside sections */
+  .dark-input {
+    width: 100%; padding: 10px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: 'Sora', sans-serif;
+    transition: border-color var(--tr), box-shadow var(--tr);
+    outline: none;
+    box-sizing: border-box;
+  }
+  .dark-input:focus {
+    border-color: rgba(96,165,250,0.45);
+    box-shadow: 0 0 0 3px rgba(96,165,250,0.08);
+  }
+  .dark-input option { background: #1a1a2e; }
+  .form-label {
+    display: block; font-size: 0.78rem; font-weight: 500;
+    color: var(--text-secondary); margin-bottom: 6px;
+  }
+  .form-section-title {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--text-muted);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    margin: 0 0 16px;
+  }
+  .submit-btn {
+    padding: 10px 24px; border-radius: var(--radius-pill);
+    background: linear-gradient(135deg,#6366f1,#60a5fa);
+    color: #fff; border: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600;
+    font-family: 'Sora', sans-serif;
+    transition: opacity var(--tr);
+  }
+  .submit-btn:hover { opacity: 0.9; }
+  .cancel-btn {
+    padding: 10px 24px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border); color: var(--text-secondary);
+    background: transparent; cursor: pointer;
+    font-size: 0.82rem; font-family: 'Sora', sans-serif;
+    transition: all var(--tr);
+  }
+  .cancel-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+  .toast-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .toast {
+    min-width: 300px;
+    max-width: 360px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.25);
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: auto;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .toast-success { background: rgba(34,197,94,0.95); }
+  .toast-error   { background: rgba(248,113,113,0.95); }
+  .toast-info    { background: rgba(96,165,250,0.95); }
+
+  /* Media scroll containers */
+  .media-scroll-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  .media-scroll-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  .media-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+  }
+  .media-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+  }
+  .media-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.3);
+  }
+
+  /* Event cards */
+  .event-card:hover {
+    background: rgba(255,255,255,0.04) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+  }</style>
+{% endblock %}
+
 {% block content %}
-<!-- Dashboard Content -->
+
+<!-- ═══════════════════════════════════════════
+     DASHBOARD CONTENT
+════════════════════════════════════════════ -->
+<div id="toast-wrapper" class="toast-wrapper"></div>
 <div id="dashboard-content">
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-    <!-- Total Clubs Card -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm text-gray-600 font-medium">Total Clubs</p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_clubs }}</p>
-                <p class="text-xs text-green-600 mt-2">
-                    <span class="font-semibold">Active</span>
-                </p>
-            </div>
-            <div class="bg-blue-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
-                </svg>
-            </div>
+
+  <!-- Stat Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+
+    <div class="stat-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+          <p class="stat-label">Total Clubs</p>
+          <p class="stat-value">{{ total_clubs }}</p>
+          <p class="stat-sub" style="color:var(--accent-green);">Active</p>
         </div>
+        <div class="stat-icon" style="background:rgba(96,165,250,0.1);">
+          <svg fill="none" stroke="#60a5fa" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-5.196-3.796M9 20H4v-2a4 4 0 015.196-3.796M15 7a4 4 0 11-8 0 4 4 0 018 0zm6 3a3 3 0 11-6 0 3 3 0 016 0zM3 10a3 3 0 116 0 3 3 0 01-6 0z"/>
+          </svg>
+        </div>
+      </div>
     </div>
 
-    <!-- Total Users Card -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm text-gray-600 font-medium">Total Users</p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_users }}</p>
-                <p class="text-xs text-green-600 mt-2">
-                    <span class="font-semibold">Registered</span>
-                </p>
-            </div>
-            <div class="bg-green-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
-                </svg>
-            </div>
+    <div class="stat-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+          <p class="stat-label">Total Users</p>
+          <p class="stat-value">{{ total_users }}</p>
+          <p class="stat-sub" style="color:var(--accent-green);">Registered</p>
         </div>
+        <div class="stat-icon" style="background:rgba(34,197,94,0.1);">
+          <svg fill="none" stroke="#22c55e" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </div>
+      </div>
     </div>
 
-    <!-- Total Events Card -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm text-gray-600 font-medium">Total Events</p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_events }}</p>
-                <p class="text-xs text-blue-600 mt-2">
-                    <span class="font-semibold">Scheduled</span>
-                </p>
-            </div>
-            <div class="bg-purple-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
+    <div class="stat-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+          <p class="stat-label">Total Events</p>
+          <p class="stat-value">{{ total_events }}</p>
+          <p class="stat-sub" style="color:var(--accent-blue);">Scheduled</p>
         </div>
+        <div class="stat-icon" style="background:rgba(167,139,250,0.1);">
+          <svg fill="none" stroke="#a78bfa" stroke-width="1.8" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="3" ry="3"/>
+            <line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"/>
+            <line x1="8"  y1="2" x2="8"  y2="6" stroke-linecap="round"/>
+            <line x1="3"  y1="10" x2="21" y2="10" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
     </div>
 
-    <!-- Pending Applications Card -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm text-gray-600 font-medium">Pending Applications</p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">{{ pending_applications }}</p>
-                <p class="text-xs text-orange-600 mt-2">
-                    <span class="font-semibold">Needs Review</span>
-                </p>
-            </div>
-            <div class="bg-orange-100 rounded-full p-3">
-                <svg class="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-                </svg>
-            </div>
+    <div class="stat-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+        <div>
+          <p class="stat-label">Pending Applications</p>
+          <p class="stat-value">{{ pending_applications }}</p>
+          <p class="stat-sub" style="color:var(--accent-orange);">Needs Review</p>
         </div>
+        <div class="stat-icon" style="background:rgba(251,146,60,0.1);">
+          <svg fill="none" stroke="#fb923c" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Two Column Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <!-- Two Column -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+
     <!-- Recent Clubs -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-bold text-gray-900">Recent Clubs</h2>
-            <a href="{% url 'manage_club' %}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
-        </div>
-        <div class="space-y-4">
-            {% for club in recent_clubs %}
-            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
-                <div class="flex items-center space-x-3">
-                    {% if club.logo %}
-                    <img src="{{ club.logo.url }}" alt="{{ club.name }}" class="w-10 h-10 rounded-full object-cover">
-                    {% else %}
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span class="text-blue-600 font-semibold">{{ club.name.0 }}</span>
-                    </div>
-                    {% endif %}
-                    <div>
-                        <p class="font-medium text-gray-900">{{ club.name }}</p>
-                        <p class="text-xs text-gray-500">{{ club.founded_date|date:"M d, Y" }}</p>
-                    </div>
-                </div>
-                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Active</span>
+    <div class="section-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <p class="section-card-title">Recent Clubs</p>
+        <a href="{% url 'manage_club' %}" class="view-all">View All →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        {% for club in recent_clubs %}
+        <div class="list-row">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="list-avatar">
+              {% if club.logo %}<img src="{{ club.logo.url }}" alt="{{ club.name }}">{% else %}{{ club.name.0 }}{% endif %}
             </div>
-            {% empty %}
-            <p class="text-center text-gray-500 py-8">No clubs yet</p>
-            {% endfor %}
+            <div>
+              <p class="list-name">{{ club.name }}</p>
+              <p class="list-sub">{{ club.founded_date|date:"M d, Y" }}</p>
+            </div>
+          </div>
+          <span class="badge badge-green">Active</span>
         </div>
+        {% empty %}
+        <p class="empty-state">No clubs yet</p>
+        {% endfor %}
+      </div>
     </div>
 
     <!-- Recent Applications -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-bold text-gray-900">Recent Applications</h2>
-            <a href="{% url 'manage_applications' %}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
-        </div>
-        <div class="space-y-4">
-            {% for app in recent_applications %}
-            <div class="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-600 font-semibold">{{ app.user.username.0|upper }}</span>
-                    </div>
-                    <div>
-                        <p class="font-medium text-gray-900">{{ app.user.username }}</p>
-                        <p class="text-xs text-gray-500">{{ app.club.name }}</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    {% if app.status == 'pending' %}
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">Pending</span>
-                    {% elif app.status == 'approved' %}
-                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Approved</span>
-                    {% elif app.status == 'rejected' %}
-                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">Rejected</span>
-                    {% endif %}
-                    <p class="text-xs text-gray-500 mt-1">{{ app.applied_date|date:"M d" }}</p>
-                </div>
+    <div class="section-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <p class="section-card-title">Recent Applications</p>
+        <a href="{% url 'manage_applications' %}" class="view-all">View All →</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        {% for app in recent_applications %}
+        <div class="list-row">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="list-avatar">{{ app.user.username.0|upper }}</div>
+            <div>
+              <p class="list-name">{{ app.user.username }}</p>
+              <p class="list-sub">{{ app.club.name }}</p>
             </div>
-            {% empty %}
-            <p class="text-center text-gray-500 py-8">No applications yet</p>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-
-<!-- Recent Events -->
-<div class="bg-white rounded-lg shadow-sm p-6">
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-bold text-gray-900">Upcoming Events</h2>
-        <a href="{% url 'manage_events' %}" class="text-sm text-blue-600 hover:text-blue-800">View All</a>
-    </div>
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr>
-                    <th scope="col" class="px-6 py-3">Event Name</th>
-                    <th scope="col" class="px-6 py-3">Club</th>
-                    <th scope="col" class="px-6 py-3">Date</th>
-                    <th scope="col" class="px-6 py-3">Type</th>
-                    <th scope="col" class="px-6 py-3">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in recent_events %}
-                <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer" onclick="window.location='{% url 'event_details' event.id %}'">
-                    <td class="px-6 py-4 font-medium text-gray-900">{{ event.title }}</td>
-                    <td class="px-6 py-4">{{ event.club.name }}</td>
-                    <td class="px-6 py-4">{{ event.start_time|date:"M d, Y" }}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs capitalize">
-                            {{ event.event_type }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        {% if event.status == 'upcoming' %}
-                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">Upcoming</span>
-                        {% elif event.status == 'ongoing' %}
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">Ongoing</span>
-                        {% elif event.status == 'completed' %}
-                        <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">Completed</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center py-8 text-gray-500">No events scheduled</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-    <a href="{% url 'add_club' %}" class="flex items-center justify-center p-4 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition">
-        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"></path>
-        </svg>
-        <span class="font-medium">Add New Club</span>
-    </a>
-    <a href="{% url 'add_event' %}" class="flex items-center justify-center p-4 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition">
-        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-        </svg>
-        <span class="font-medium">Create Event</span>
-    </a>
-    <a href="{% url 'manage_applications' %}" class="flex items-center justify-center p-4 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition">
-        <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-        </svg>
-        <span class="font-medium">Review Applications</span>
-    </a>
-</div>
-</div>
-
-<!-- Profile Section -->
-<section id="section-profile" class="mt-6 hidden">
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-      <div>
-        <h3 class="text-lg font-bold text-gray-900">Profile Information</h3>
-        <p class="text-sm text-gray-600 mt-1">Update your personal and academic information</p>
-      </div>
-      <button onclick="showDashboardContent()" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-        </svg>
-        Back to Dashboard
-      </button>
-    </div>
-    
-    <form method="post" action="{% url 'admin_dashboard' %}" enctype="multipart/form-data" class="p-6">
-      {% csrf_token %}
-      
-      <!-- Profile Picture Section -->
-      <div class="mb-8">
-        <label class="block text-sm font-medium text-gray-700 mb-4">Profile Picture</label>
-        <div class="flex items-center gap-6">
-          <div class="relative">
-            {% if request.user.profile_picture %}
-              <img id="profilePreview" src="{{ request.user.profile_picture.url }}" class="w-24 h-24 rounded-full object-cover border-4 border-gray-200" alt="Profile">
-            {% else %}
-              <div id="profilePreview" class="w-24 h-24 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center text-white font-bold text-3xl border-4 border-gray-200">
-                {{ request.user.username|first|upper }}
-              </div>
+          </div>
+          <div style="text-align:right;">
+            {% if app.status == 'pending' %}
+            <span class="badge badge-yellow">Pending</span>
+            {% elif app.status == 'approved' %}
+            <span class="badge badge-green">Approved</span>
+            {% elif app.status == 'rejected' %}
+            <span class="badge badge-red">Rejected</span>
             {% endif %}
-            <label for="profile_picture" class="absolute bottom-0 right-0 bg-white rounded-full p-2 border-2 border-gray-300 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-              </svg>
-            </label>
-            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="hidden">
-          </div>
-          <div>
-            <p class="text-sm text-gray-700 font-medium">{{ request.user.username }}</p>
-            <p class="text-xs text-gray-500 mt-1">JPG, PNG or GIF. Max size 5MB</p>
-            <button type="button" onclick="document.getElementById('profile_picture').click()" class="mt-2 text-xs text-purple-600 hover:text-purple-700 font-medium">
-              Change photo
-            </button>
+            <p class="list-sub" style="margin-top:4px;">{{ app.applied_date|date:"M d" }}</p>
           </div>
         </div>
+        {% empty %}
+        <p class="empty-state">No applications yet</p>
+        {% endfor %}
       </div>
-
-      <!-- Basic Information -->
-      <div class="mb-8">
-        <h4 class="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Basic Information</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Username <span class="text-red-500">*</span>
-            </label>
-            <input type="text" name="username" value="{{ request.user.username }}" required 
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-            <input type="tel" name="phone" value="{{ request.user.phone }}" 
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
-              placeholder="+91 00000 00000">
-          </div>
-        </div>
-      </div>
-
-      <!-- Email Information -->
-      <div class="mb-8">
-        <h4 class="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Email Addresses</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Personal Email <span class="text-red-500">*</span>
-            </label>
-            <input type="email" name="personal_email" value="{{ request.user.personal_email|default:request.user.email }}" required 
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
-              placeholder="your.email@example.com">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">College Email</label>
-            <input type="email" name="college_email" value="{{ request.user.college_email }}" 
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
-              placeholder="student@college.edu">
-          </div>
-        </div>
-      </div>
-
-      <!-- Academic Information -->
-      <div class="mb-8">
-        <h4 class="text-sm font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Academic Details</h4>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
-            <select name="course" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white">
-              <option value="">Select Course</option>
-              <option value="btech" {% if request.user.course == 'btech' %}selected{% endif %}>B.Tech</option>
-              <option value="mtech" {% if request.user.course == 'mtech' %}selected{% endif %}>M.Tech</option>
-              <option value="bca" {% if request.user.course == 'bca' %}selected{% endif %}>BCA</option>
-              <option value="mca" {% if request.user.course == 'mca' %}selected{% endif %}>MCA</option>
-              <option value="bba" {% if request.user.course == 'bba' %}selected{% endif %}>BBA</option>
-              <option value="mba" {% if request.user.course == 'mba' %}selected{% endif %}>MBA</option>
-              <option value="bsc" {% if request.user.course == 'bsc' %}selected{% endif %}>B.Sc</option>
-              <option value="msc" {% if request.user.course == 'msc' %}selected{% endif %}>M.Sc</option>
-              <option value="other" {% if request.user.course == 'other' %}selected{% endif %}>Other</option>
-            </select>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Year</label>
-            <select name="year" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors bg-white">
-              <option value="">Select Year</option>
-              <option value="1" {% if request.user.year == '1' %}selected{% endif %}>First Year</option>
-              <option value="2" {% if request.user.year == '2' %}selected{% endif %}>Second Year</option>
-              <option value="3" {% if request.user.year == '3' %}selected{% endif %}>Third Year</option>
-              <option value="4" {% if request.user.year == '4' %}selected{% endif %}>Fourth Year</option>
-              <option value="alumni" {% if request.user.year == 'alumni' %}selected{% endif %}>Alumni</option>
-            </select>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Enrollment Number</label>
-            <input type="text" name="enrollment_number" value="{{ request.user.enrollment_number }}" 
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
-              placeholder="ENR2024001">
-          </div>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Branch/Department</label>
-          <input type="text" name="branch" value="{{ request.user.branch }}" 
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
-            placeholder="e.g., Computer Science Engineering">
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
-        <button type="button" onclick="window.location.reload()" class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
-          Cancel
-        </button>
-        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-colors shadow-sm">
-          Save Changes
-        </button>
-      </div>
-    </form>
+    </div>
   </div>
 
-  <!-- Success/Error Messages -->
-  {% if messages %}
-  <div class="mt-6 space-y-3">
-    {% for message in messages %}
-    <div class="p-4 rounded-lg flex items-start gap-3 {% if message.tags == 'success' %}bg-green-50 border border-green-200{% elif message.tags == 'error' %}bg-red-50 border border-red-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
-      <svg class="w-5 h-5 flex-shrink-0 mt-0.5 {% if message.tags == 'success' %}text-green-500{% elif message.tags == 'error' %}text-red-500{% else %}text-blue-500{% endif %}" fill="currentColor" viewBox="0 0 20 20">
-        {% if message.tags == 'success' %}
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-        {% elif message.tags == 'error' %}
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-        {% else %}
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-        {% endif %}
+  <!-- Upcoming Events Table -->
+  <div class="section-card mb-5">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <p class="section-card-title">Upcoming Events</p>
+      <a href="{% url 'manage_events' %}" class="view-all">View All →</a>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="dark-table">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Club</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in recent_events %}
+          <tr onclick="window.location='{% url 'event_details' event.id %}'">
+            <td style="font-weight:500;">{{ event.title }}</td>
+            <td class="muted">{{ event.club.name }}</td>
+            <td class="muted">{{ event.start_time|date:"M d, Y" }}</td>
+            <td><span class="badge badge-blue" style="text-transform:capitalize;">{{ event.event_type }}</span></td>
+            <td>
+              {% if event.status == 'upcoming' %}
+              <span class="badge badge-green">Upcoming</span>
+              {% elif event.status == 'ongoing' %}
+              <span class="badge badge-blue">Ongoing</span>
+              {% elif event.status == 'completed' %}
+              <span class="badge badge-gray">Completed</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="empty-state">No events scheduled</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Feedback Analytics & Recent Feedbacks -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+    
+    <!-- Rating Distribution (Pie Chart) -->
+    <div class="section-card lg:col-span-1">
+      <p class="section-card-title mb-4">Rating Distribution</p>
+      <div style="height: 250px; position: relative; display: flex; align-items: center; justify-content: center;">
+        <canvas id="feedbackPieChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Feedbacks -->
+    <div class="section-card lg:col-span-2">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <p class="section-card-title">Recent Feedbacks</p>
+        <a href="{% url 'manage_feedbacks' %}" class="view-all">Manage All →</a>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="dark-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Rating</th>
+              <th>Comment</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for fb in recent_feedbacks %}
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="list-avatar" style="width:28px;height:28px;font-size:0.7rem;">{{ fb.user.username.0|upper }}</div>
+                  <span style="font-size:0.8rem;">{{ fb.user.username }}</span>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;gap:1px;color:#facc15;">
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= fb.rating %}
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </td>
+              <td class="muted" style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:0.75rem;">
+                {{ fb.comment|default:"No comment" }}
+              </td>
+              <td class="muted" style="font-size:0.7rem;">{{ fb.submitted_at|date:"M d" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="empty-state">No feedbacks yet</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <a href="{% url 'add_club' %}" class="quick-btn quick-blue">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
       </svg>
-      <p class="text-sm font-medium {% if message.tags == 'success' %}text-green-800{% elif message.tags == 'error' %}text-red-800{% else %}text-blue-800{% endif %}">
+      Add New Club
+    </a>
+    <a href="{% url 'add_event' %}" class="quick-btn quick-purple">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="18" rx="3" ry="3"/>
+        <line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round"/>
+        <line x1="8"  y1="2" x2="8"  y2="6" stroke-linecap="round"/>
+        <line x1="3"  y1="10" x2="21" y2="10" stroke-linecap="round"/>
+      </svg>
+      Create Event
+    </a>
+    <a href="{% url 'manage_applications' %}" class="quick-btn quick-orange">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      </svg>
+      Review Applications
+    </a>
+  </div>
+
+</div><!-- /#dashboard-content -->
+
+<section id="section-media" class="hidden">
+  <div class="section-header">
+    <div>
+      <p class="section-header-title">Event Media</p>
+      <p class="section-header-sub">Manage photos and videos for your club events.</p>
+    </div>
+    <button class="back-btn" onclick="showDashboardContent()">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Back
+    </button>
+  </div>
+
+  <div style="display:flex;gap:24px;min-height:600px;">
+    <!-- Left Side: Events List -->
+    <div style="flex:1;max-width:400px;">
+      <div class="section-card" style="height:fit-content;">
+        <p class="section-card-title" style="margin-bottom:16px;">Events</p>
+        <div id="events-list" style="max-height:500px;overflow-y:auto;">
+          {% for event in all_events %}
+          <div class="event-card" data-event-id="{{ event.id }}" style="padding:12px;border-radius:10px;margin-bottom:8px;cursor:pointer;border:1px solid var(--border);transition:all var(--tr);">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <div style="width:40px;height:40px;border-radius:8px;background:var(--accent-blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="3" y="4" width="18" height="18" rx="3" ry="3"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div style="flex:1;min-width:0;">
+                <p style="font-size:0.9rem;font-weight:600;color:var(--text-primary);margin:0 0 4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ event.title }}</p>
+                <p style="font-size:0.75rem;color:var(--text-secondary);margin:0 0 2px 0;">{{ event.club.name }}</p>
+                <p style="font-size:0.7rem;color:var(--text-muted);margin:0;">{{ event.start_time|date:"M j, Y g:i A" }}</p>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="empty-state" style="margin:20px 0;">No events found.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Media Display & Upload -->
+    <div style="flex:2;">
+      <!-- Event Info & Upload Form -->
+      <div id="event-info-section" class="section-card" style="display:none;margin-bottom:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+          <div>
+            <h3 id="event-title" style="font-size:1.1rem;font-weight:600;color:var(--text-primary);margin:0 0 4px 0;"></h3>
+            <p id="event-details" style="font-size:0.85rem;color:var(--text-secondary);margin:0;"></p>
+          </div>
+          <button id="upload-toggle-btn" class="submit-btn" style="padding:8px 16px;font-size:0.8rem;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline;margin-right:6px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            </svg>
+            Upload Media
+          </button>
+        </div>
+
+        <!-- Upload Form (Hidden by default) -->
+        <div id="upload-form" style="display:none;border-top:1px solid var(--border);padding-top:20px;margin-top:16px;">
+          <form id="mediaUploadForm" method="post" action="{% url 'admin_dashboard' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="media_upload">
+            <input type="hidden" id="current-event-id" name="event_id" value="">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div>
+                <label class="form-label">Media Title</label>
+                <input type="text" name="title" maxlength="200" class="dark-input" placeholder="Optional title">
+              </div>
+              <div>
+                <label class="form-label">Upload File</label>
+                <input type="file" name="media_file" accept="image/*,video/*" class="dark-input" required>
+                <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:6px;">Supported: JPG, PNG, GIF, MP4, MOV, WEBM</p>
+              </div>
+            </div>
+            <div style="margin-top:16px;display:flex;justify-end;gap:10px;">
+              <button type="button" id="cancel-upload-btn" class="cancel-btn">Cancel</button>
+              <button type="submit" class="submit-btn">Upload</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Media Display -->
+      <div id="media-display-section" style="display:none;">
+        <!-- Photos Section -->
+        <div class="section-card" style="margin-bottom:24px;">
+          <p class="section-card-title" style="margin-bottom:16px;">Photos</p>
+          <div class="media-scroll-container">
+            <div id="photos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <!-- Photos will be loaded here -->
+            </div>
+          </div>
+          <div id="photos-empty" class="empty-state" style="display:none;">No photos uploaded for this event.</div>
+        </div>
+
+        <!-- Videos Section -->
+        <div class="section-card">
+          <p class="section-card-title" style="margin-bottom:16px;">Videos</p>
+          <div class="media-scroll-container">
+            <div id="videos-grid" class="grid grid-cols-1 gap-4">
+              <!-- Videos will be loaded here -->
+            </div>
+          </div>
+          <div id="videos-empty" class="empty-state" style="display:none;">No videos uploaded for this event.</div>
+        </div>
+      </div>
+
+      <!-- Initial State -->
+      <div id="initial-state" class="section-card" style="text-align:center;padding:60px 20px;">
+        <svg width="64" height="64" fill="none" stroke="var(--text-muted)" stroke-width="1" viewBox="0 0 24 24" style="margin:0 auto 16px;">
+          <rect x="3" y="3" width="18" height="18" rx="3" ry="3"/>
+          <circle cx="9" cy="9" r="2"/>
+          <path d="m21 15-3.086-3.086a2 2 0 00-2.828 0L6 21"/>
+        </svg>
+        <p style="font-size:1rem;color:var(--text-secondary);margin:0 0 8px 0;">Select an event to view media</p>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin:0;">Click on any event card on the left to see its photos and videos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     PROFILE SECTION
+════════════════════════════════════════════ -->
+<section id="section-profile" class="hidden">
+  <div class="section-header">
+    <div>
+      <p class="section-header-title">Profile Information</p>
+      <p class="section-header-sub">Update your personal and academic information</p>
+    </div>
+    <button class="back-btn" onclick="showDashboardContent()">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Back
+    </button>
+  </div>
+
+  <form method="post" action="{% url 'admin_dashboard' %}" enctype="multipart/form-data" style="padding:24px;">
+    {% csrf_token %}
+
+    <!-- Profile Picture -->
+    <div style="margin-bottom:28px;">
+      <p class="form-label" style="margin-bottom:14px;">Profile Picture</p>
+      <div style="display:flex;align-items:center;gap:20px;">
+        <div style="position:relative;">
+          {% if request.user.profile_picture %}
+            <img id="profilePreview" src="{{ request.user.profile_picture.url }}"
+              style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" alt="Profile">
+          {% else %}
+            <div id="profilePreview"
+              style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:700;color:#fff;border:2px solid var(--border);">
+              {{ request.user.username|first|upper }}
+            </div>
+          {% endif %}
+          <label for="profile_picture"
+            style="position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:var(--bg-container);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+            <svg width="13" height="13" fill="none" stroke="var(--text-secondary)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </label>
+          <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display:none;">
+        </div>
+        <div>
+          <p style="font-size:0.85rem;font-weight:500;color:var(--text-primary);margin:0 0 4px;">{{ request.user.username }}</p>
+          <p style="font-size:0.72rem;color:var(--text-secondary);margin:0;">JPG, PNG or GIF · Max 5MB</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Basic Info -->
+    <div style="margin-bottom:24px;">
+      <p class="form-section-title">Basic Information</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">Username <span style="color:#f87171;">*</span></label>
+          <input type="text" name="username" value="{{ request.user.username }}" required class="dark-input">
+        </div>
+        <div>
+          <label class="form-label">Phone Number</label>
+          <input type="tel" name="phone" value="{{ request.user.phone }}" class="dark-input" placeholder="+91 00000 00000">
+        </div>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div style="margin-bottom:24px;">
+      <p class="form-section-title">Email Addresses</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">Personal Email <span style="color:#f87171;">*</span></label>
+          <input type="email" name="personal_email" value="{{ request.user.personal_email|default:request.user.email }}" required class="dark-input">
+        </div>
+        <div>
+          <label class="form-label">College Email</label>
+          <input type="email" name="college_email" value="{{ request.user.college_email }}" class="dark-input" placeholder="student@college.edu">
+        </div>
+      </div>
+    </div>
+
+    <!-- Academic -->
+    <div style="margin-bottom:24px;">
+      <p class="form-section-title">Academic Details</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" style="margin-bottom:16px;">
+        <div>
+          <label class="form-label">Course</label>
+          <select name="course" class="dark-input">
+            <option value="">Select Course</option>
+            <option value="btech"  {% if request.user.course == 'btech'  %}selected{% endif %}>B.Tech</option>
+            <option value="mtech"  {% if request.user.course == 'mtech'  %}selected{% endif %}>M.Tech</option>
+            <option value="bca"    {% if request.user.course == 'bca'    %}selected{% endif %}>BCA</option>
+            <option value="mca"    {% if request.user.course == 'mca'    %}selected{% endif %}>MCA</option>
+            <option value="bba"    {% if request.user.course == 'bba'    %}selected{% endif %}>BBA</option>
+            <option value="mba"    {% if request.user.course == 'mba'    %}selected{% endif %}>MBA</option>
+            <option value="bsc"    {% if request.user.course == 'bsc'    %}selected{% endif %}>B.Sc</option>
+            <option value="msc"    {% if request.user.course == 'msc'    %}selected{% endif %}>M.Sc</option>
+            <option value="other"  {% if request.user.course == 'other'  %}selected{% endif %}>Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Year</label>
+          <select name="year" class="dark-input">
+            <option value="">Select Year</option>
+            <option value="1"      {% if request.user.year == '1'      %}selected{% endif %}>First Year</option>
+            <option value="2"      {% if request.user.year == '2'      %}selected{% endif %}>Second Year</option>
+            <option value="3"      {% if request.user.year == '3'      %}selected{% endif %}>Third Year</option>
+            <option value="4"      {% if request.user.year == '4'      %}selected{% endif %}>Fourth Year</option>
+            <option value="alumni" {% if request.user.year == 'alumni' %}selected{% endif %}>Alumni</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Enrollment Number</label>
+          <input type="text" name="enrollment_number" value="{{ request.user.enrollment_number }}" class="dark-input" placeholder="ENR2024001">
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Branch / Department</label>
+        <input type="text" name="branch" value="{{ request.user.branch }}" class="dark-input" placeholder="e.g., Computer Science Engineering">
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:20px;border-top:1px solid var(--border);">
+      <button type="button" class="cancel-btn" onclick="window.location.reload()">Cancel</button>
+      <button type="submit" class="submit-btn">Save Changes</button>
+    </div>
+  </form>
+
+  {% if messages %}
+  <div style="padding:0 24px 24px;">
+    {% for message in messages %}
+    <div style="padding:13px 16px;border-radius:10px;margin-bottom:8px;
+      {% if message.tags == 'success' %}background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.18);{% elif message.tags == 'error' %}background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.18);{% else %}background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.18);{% endif %}">
+      <p style="font-size:0.82rem;font-weight:500;margin:0;
+        {% if message.tags == 'success' %}color:#4ade80;{% elif message.tags == 'error' %}color:#fca5a5;{% else %}color:#93c5fd;{% endif %}">
         {{ message }}
       </p>
     </div>
@@ -397,156 +839,364 @@
   {% endif %}
 </section>
 
-<!-- Change Password Section -->
-<section id="section-change-password" class="mt-6 hidden">
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-      <div>
-        <h3 class="text-lg font-bold text-gray-900">Change Password</h3>
-        <p class="text-sm text-gray-600 mt-1">Update your account password</p>
-      </div>
-      <button onclick="showDashboardContent()" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-        </svg>
-        Back to Dashboard
-      </button>
+
+<!-- ═══════════════════════════════════════════
+     CHANGE PASSWORD SECTION
+════════════════════════════════════════════ -->
+<section id="section-change-password" class="hidden">
+  <div class="section-header">
+    <div>
+      <p class="section-header-title">Change Password</p>
+      <p class="section-header-sub">Update your account password</p>
     </div>
-    
-    <div class="p-6 max-w-2xl">
-      <form method="post" action="{% url 'change_password' %}" class="space-y-5">
-        {% csrf_token %}
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-          <input type="password" name="current_password" required 
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-          <input type="password" name="new_password" required 
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-          <p class="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-          <input type="password" name="confirm_password" required 
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-        </div>
-        
-        <div class="pt-4">
-          <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 transition-colors">
-            Update Password
-          </button>
-        </div>
-      </form>
+    <button class="back-btn" onclick="showDashboardContent()">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Back
+    </button>
+  </div>
+  <div style="padding:24px;max-width:480px;">
+    <form method="post" action="{% url 'change_password' %}">
+      {% csrf_token %}
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Current Password</label>
+        <input type="password" name="current_password" required class="dark-input">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">New Password</label>
+        <input type="password" name="new_password" required class="dark-input">
+        <p style="font-size:0.7rem;color:var(--text-muted);margin:6px 0 0;">Must be at least 8 characters</p>
+      </div>
+      <div style="margin-bottom:24px;">
+        <label class="form-label">Confirm New Password</label>
+        <input type="password" name="confirm_password" required class="dark-input">
+      </div>
+      <button type="submit" class="submit-btn">Update Password</button>
+    </form>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     2FA SECTION
+════════════════════════════════════════════ -->
+<section id="section-2fa" class="hidden">
+  <div class="section-header">
+    <div>
+      <p class="section-header-title">Two-Factor Authentication</p>
+      <p class="section-header-sub">Add an extra layer of security to your account</p>
+    </div>
+    <button class="back-btn" onclick="showDashboardContent()">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      Back
+    </button>
+  </div>
+  <div style="padding:24px;">
+    <div style="background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.14);border-radius:12px;padding:16px;display:flex;align-items:flex-start;gap:12px;max-width:480px;">
+      <svg width="18" height="18" style="flex-shrink:0;margin-top:1px;" fill="none" stroke="#60a5fa" stroke-width="1.8" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12" stroke-linecap="round"/>
+        <line x1="12" y1="16" x2="12.01" y2="16" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <p style="font-size:0.85rem;font-weight:600;color:var(--text-primary);margin:0 0 4px;">2FA is not enabled</p>
+        <p style="font-size:0.75rem;color:var(--text-secondary);margin:0;">Protect your account by enabling two-factor authentication</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- 2FA Section -->
-<section id="section-2fa" class="mt-6 hidden">
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-    <div class="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-      <div>
-        <h3 class="text-lg font-bold text-gray-900">Two-Factor Authentication</h3>
-        <p class="text-sm text-gray-600 mt-1">Add an extra layer of security to your account</p>
-      </div>
-      <button onclick="showDashboardContent()" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-        </svg>
-        Back to Dashboard
-      </button>
-    </div>
-    
-    <div class="p-6 max-w-2xl">
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div class="flex items-start gap-3">
-          <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-          </svg>
-          <div>
-            <h4 class="text-sm font-semibold text-blue-900 mb-1">2FA is not enabled</h4>
-            <p class="text-xs text-blue-800">Protect your account by enabling two-factor authentication</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 {% endblock %}
 
 {% block extra_js %}
 <script>
   // Profile picture preview
   (function() {
-    const fileInput = document.getElementById('profile_picture');
+    const input   = document.getElementById('profile_picture');
     const preview = document.getElementById('profilePreview');
-    
-    if (fileInput && preview) {
-      fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            if (preview.tagName === 'IMG') {
-              preview.src = e.target.result;
-            } else {
-              const img = document.createElement('img');
-              img.id = 'profilePreview';
-              img.src = e.target.result;
-              img.className = 'w-24 h-24 rounded-full object-cover border-4 border-gray-200';
-              preview.parentNode.replaceChild(img, preview);
-            }
-          };
-          reader.readAsDataURL(file);
+    if (!input || !preview) return;
+    input.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        if (preview.tagName === 'IMG') {
+          preview.src = ev.target.result;
+        } else {
+          const img = document.createElement('img');
+          img.id = 'profilePreview';
+          img.src = ev.target.result;
+          img.style.cssText = 'width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--border);';
+          preview.parentNode.replaceChild(img, preview);
         }
-      });
-    }
+      };
+      reader.readAsDataURL(file);
+    });
   })();
 
-  // Section navigation functions
-  function showSection(sectionName) {
-    // Hide dashboard content
-    const dashboardContent = document.getElementById('dashboard-content');
-    if (dashboardContent) {
-      dashboardContent.classList.add('hidden');
-    }
-    
-    // Hide all sections
-    const sections = ['section-profile', 'section-change-password', 'section-2fa'];
-    sections.forEach(function(id) {
+  // Section navigation
+  function showSection(name) {
+    document.getElementById('dashboard-content').classList.add('hidden');
+    ['section-profile','section-change-password','section-2fa','section-media'].forEach(function(id) {
       const section = document.getElementById(id);
-      if (section) {
-        section.classList.add('hidden');
-      }
+      if (section) section.classList.add('hidden');
     });
-    
-    // Show the requested section
-    const targetSection = document.getElementById('section-' + sectionName);
-    if (targetSection) {
-      targetSection.classList.remove('hidden');
-      setTimeout(function() {
-        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+    const target = document.getElementById('section-' + name);
+    if (target) {
+      target.classList.remove('hidden');
+      setTimeout(function() { target.scrollIntoView({ behavior:'smooth', block:'start' }); }, 80);
     }
   }
 
-  // Show profile section if hash is present on page load
+  function showDashboardContent() {
+    ['section-profile','section-change-password','section-2fa','section-media'].forEach(function(id) {
+      const section = document.getElementById(id);
+      if (section) section.classList.add('hidden');
+    });
+    document.getElementById('dashboard-content').classList.remove('hidden');
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
-    const hash = window.location.hash;
-    if (hash === '#section-profile') {
-      if (typeof showProfileSection === 'function') {
-        showProfileSection();
-      }
-    } else if (hash === '#section-change-password') {
-      showSection('change-password');
-    } else if (hash === '#section-2fa') {
-      showSection('2fa');
+    // Initial check for hash on page load
+    const initialHash = window.location.hash;
+    if      (initialHash === '#section-profile')          showSection('profile');
+    else if (initialHash === '#section-change-password')  showSection('change-password');
+    else if (initialHash === '#section-media')            showSection('media');
+    else if (initialHash === '#section-2fa')              showSection('2fa');
+
+    // Listen for hash changes to switch sections while on the same page
+    window.addEventListener('hashchange', function() {
+      const hash = window.location.hash;
+      if      (hash === '#section-profile')          showSection('profile');
+      else if (hash === '#section-change-password')  showSection('change-password');
+      else if (hash === '#section-media')            showSection('media');
+      else if (hash === '#section-2fa')              showSection('2fa');
+      else if (hash === '' || hash === '#')         showDashboardContent();
+    });
+
+    // Media section functionality
+    const mediaForm = document.getElementById('mediaUploadForm');
+    const toastWrapper = document.getElementById('toast-wrapper');
+    const uploadForm = document.getElementById('upload-form');
+    const uploadToggleBtn = document.getElementById('upload-toggle-btn');
+    const cancelUploadBtn = document.getElementById('cancel-upload-btn');
+    const eventInfoSection = document.getElementById('event-info-section');
+    const mediaDisplaySection = document.getElementById('media-display-section');
+    const initialState = document.getElementById('initial-state');
+    let currentEventId = null;
+
+    function createToast(message, type) {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type} show`;
+      toast.textContent = message;
+      toastWrapper.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-12px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+      return toast;
     }
+
+    function loadEventMedia(eventId) {
+      fetch(`/admin-page/get_event_media/${eventId}/`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            createToast(data.error, 'error');
+            return;
+          }
+
+          // Update event info
+          document.getElementById('event-title').textContent = data.event.title;
+          document.getElementById('event-details').textContent = `${data.event.club_name} • ${data.event.start_time}`;
+          document.getElementById('current-event-id').value = eventId;
+          currentEventId = eventId;
+
+          // Show event info and media sections
+          eventInfoSection.style.display = 'block';
+          mediaDisplaySection.style.display = 'block';
+          initialState.style.display = 'none';
+
+          // Load photos
+          const photosGrid = document.getElementById('photos-grid');
+          const photosEmpty = document.getElementById('photos-empty');
+          photosGrid.innerHTML = '';
+
+          if (data.photos.length > 0) {
+            photosEmpty.style.display = 'none';
+            data.photos.forEach(photo => {
+              const photoCard = document.createElement('div');
+              photoCard.className = 'section-card';
+              photoCard.style.cssText = 'padding:0;';
+              photoCard.innerHTML = `
+                <img src="${photo.file_url}" alt="${photo.title}" style="width:100%;height:180px;object-fit:cover;border-radius:14px;">
+                <div style="padding:14px;">
+                  <p class="list-name">${photo.title}</p>
+                  <p class="list-sub">Uploaded ${photo.uploaded_at}</p>
+                  <div style="margin-top:10px;display:flex;justify-end;">
+                    <a href="${photo.file_url}" download style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:0.75rem;font-weight:500;color:#60a5fa;background:rgba(96,165,250,0.1);border-radius:6px;text-decoration:none;transition:all var(--tr);">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                      </svg>
+                      Download
+                    </a>
+                  </div>
+                </div>
+              `;
+              photosGrid.appendChild(photoCard);
+            });
+          } else {
+            photosEmpty.style.display = 'block';
+          }
+
+          // Load videos
+          const videosGrid = document.getElementById('videos-grid');
+          const videosEmpty = document.getElementById('videos-empty');
+          videosGrid.innerHTML = '';
+
+          if (data.videos.length > 0) {
+            videosEmpty.style.display = 'none';
+            data.videos.forEach(video => {
+              const videoCard = document.createElement('div');
+              videoCard.className = 'section-card';
+              videoCard.style.cssText = 'padding:0;';
+              videoCard.innerHTML = `
+                <video controls style="width:100%;height:220px;border-radius:14px;object-fit:cover;">
+                  <source src="${video.file_url}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                <div style="padding:14px;">
+                  <p class="list-name">${video.title}</p>
+                  <p class="list-sub">Uploaded ${video.uploaded_at}</p>
+                  <div style="margin-top:10px;display:flex;justify-end;">
+                    <a href="${video.file_url}" download style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:0.75rem;font-weight:500;color:#60a5fa;background:rgba(96,165,250,0.1);border-radius:6px;text-decoration:none;transition:all var(--tr);">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                      </svg>
+                      Download
+                    </a>
+                  </div>
+                </div>
+              `;
+              videosGrid.appendChild(videoCard);
+            });
+          } else {
+            videosEmpty.style.display = 'block';
+          }
+        })
+        .catch(() => {
+          createToast('Failed to load event media.', 'error');
+        });
+    }
+
+    // Event card click handlers
+    document.querySelectorAll('.event-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const eventId = this.getAttribute('data-event-id');
+        // Remove active class from all cards
+        document.querySelectorAll('.event-card').forEach(c => c.style.background = '');
+        // Add active class to clicked card
+        this.style.background = 'rgba(96,165,250,0.1)';
+        this.style.borderColor = 'rgba(96,165,250,0.3)';
+        loadEventMedia(eventId);
+      });
+    });
+
+    // Upload form toggle
+    if (uploadToggleBtn) {
+      uploadToggleBtn.addEventListener('click', function() {
+        if (uploadForm.style.display === 'none') {
+          uploadForm.style.display = 'block';
+          this.textContent = 'Hide Upload Form';
+        } else {
+          uploadForm.style.display = 'none';
+          this.textContent = 'Upload Media';
+        }
+      });
+    }
+
+    if (cancelUploadBtn) {
+      cancelUploadBtn.addEventListener('click', function() {
+        uploadForm.style.display = 'none';
+        uploadToggleBtn.textContent = 'Upload Media';
+      });
+    }
+
+    // Media upload form submission
+    if (mediaForm) {
+      mediaForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(mediaForm);
+
+        fetch(mediaForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+        })
+        .then(response => response.json().then(data => ({status: response.status, body: data})))
+        .then(({status, body}) => {
+          const success = status >= 200 && status < 300 && body.success;
+          createToast(body.message || (success ? 'Uploaded successfully.' : 'Upload failed.'), success ? 'success' : 'error');
+          if (success && currentEventId) {
+            // Reload media for current event
+            loadEventMedia(currentEventId);
+            // Reset form
+            mediaForm.reset();
+            uploadForm.style.display = 'none';
+            uploadToggleBtn.textContent = 'Upload Media';
+          }
+        })
+        .catch(() => {
+          createToast('Upload failed. Please try again.', 'error');
+        });
+      });
+    }
+
+    // Initialize Pie Chart
+    const feedbackStats = {{ feedback_stats|safe }};
+    const ctx = document.getElementById('feedbackPieChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['1 Star', '2 Stars', '3 Stars', '4 Stars', '5 Stars'],
+            datasets: [{
+                data: [feedbackStats[1], feedbackStats[2], feedbackStats[3], feedbackStats[4], feedbackStats[5]],
+                backgroundColor: [
+                    '#f87171', // Red
+                    '#fb923c', // Orange
+                    '#fbbf24', // Amber
+                    '#60a5fa', // Blue
+                    '#34d399'  // Emerald
+                ],
+                borderWidth: 0,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#71717a',
+                        font: { family: "'Sora', sans-serif", size: 10 },
+                        padding: 15,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleFont: { family: "'Sora', sans-serif" },
+                    bodyFont: { family: "'Sora', sans-serif" }
+                }
+            }
+        }
+    });
   });
+
 </script>
 {% endblock %}

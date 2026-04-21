@@ -1,0 +1,153 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Manage Event Feedbacks{% endblock %}
+
+{% block breadcrumb %}
+<li>
+    <div class="flex items-center">
+        <svg class="w-3 h-3 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-blue-600 ml-1 md:ml-2 font-medium">Event Feedbacks</span>
+    </div>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Event Feedbacks</h1>
+            <p class="text-sm text-gray-600 mt-1">View and manage feedbacks from all event participants</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Event</label>
+                <select name="event" class="dark-select" onchange="this.form.submit()">
+                    <option value="">All Events</option>
+                    {% for event in events %}
+                    <option value="{{ event.id }}" {% if current_event == event.id|stringformat:"s" %}selected{% endif %}>{{ event.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                <select name="rating" class="dark-select" onchange="this.form.submit()">
+                    <option value="">All Ratings</option>
+                    <option value="5" {% if current_rating == '5' %}selected{% endif %}>5 Stars</option>
+                    <option value="4" {% if current_rating == '4' %}selected{% endif %}>4 Stars</option>
+                    <option value="3" {% if current_rating == '3' %}selected{% endif %}>3 Stars</option>
+                    <option value="2" {% if current_rating == '2' %}selected{% endif %}>2 Stars</option>
+                    <option value="1" {% if current_rating == '1' %}selected{% endif %}>1 Star</option>
+                </select>
+            </div>
+            <div class="flex items-end gap-2">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Filter
+                </button>
+                <a href="{% url 'manage_feedbacks' %}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                    Clear
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Feedbacks Table -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Event</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Rating</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Comment</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for feedback in feedbacks %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-xs">
+                                {{ feedback.user.username|first|upper }}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">{{ feedback.user.get_full_name|default:feedback.user.username }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-sm text-gray-700">{{ feedback.event.title }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center text-yellow-400">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= feedback.rating %}
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                {% else %}
+                                    <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-sm text-gray-600 italic">"{{ feedback.comment|default:"No comment provided" }}"</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-xs text-gray-500">{{ feedback.submitted_at|date:"M d, Y" }}</p>
+                        <p class="text-[10px] text-gray-400 uppercase font-semibold">{{ feedback.submitted_at|date:"g:i A" }}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <form method="post" action="{% url 'delete_feedback' feedback.id %}" onsubmit="return confirm('Are you sure you want to delete this feedback?')">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-600 hover:text-red-900 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                        </svg>
+                        <p class="text-gray-500 text-lg">No feedbacks found.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if feedbacks.has_other_pages %}
+    <div class="mt-6 flex items-center justify-center gap-2">
+        {% if feedbacks.has_previous %}
+        <a href="?page={{ feedbacks.previous_page_number }}{% if current_event %}&event={{ current_event }}{% endif %}{% if current_rating %}&rating={{ current_rating }}{% endif %}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+            Previous
+        </a>
+        {% endif %}
+
+        <span class="px-4 py-2 text-gray-700 font-medium">
+            Page {{ feedbacks.number }} of {{ feedbacks.paginator.num_pages }}
+        </span>
+
+        {% if feedbacks.has_next %}
+        <a href="?page={{ feedbacks.next_page_number }}{% if current_event %}&event={{ current_event }}{% endif %}{% if current_rating %}&rating={{ current_rating }}{% endif %}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+            Next
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

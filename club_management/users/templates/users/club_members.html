@@ -8,14 +8,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
 </head>
-<body class="bg-gray-50">
+<body class="bg-slate-950 text-slate-100">
     <div class="min-h-screen">
         <!-- Header -->
-        <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-10 shadow-lg shadow-slate-950/20">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <a href="{% url 'admin_dashboard' %}" class="text-purple-600 hover:text-purple-700">
+                        <a href="{% url 'admin_dashboard' %}" class="text-indigo-400 hover:text-indigo-300">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
@@ -29,13 +29,13 @@
                             </div>
                             {% endif %}
                             <div>
-                                <h1 class="text-2xl font-bold text-gray-900">{{ club.name }}</h1>
-                                <p class="text-sm text-gray-600">Club Members</p>
+                                <h1 class="text-2xl font-bold text-slate-100">{{ club.name }}</h1>
+                                <p class="text-sm text-slate-400">Club Members</p>
                             </div>
                         </div>
                     </div>
                     {% if is_admin %}
-                    <a href="{% url 'admin_dashboard' %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+                    <a href="{% url 'admin_dashboard' %}" class="px-4 py-2 text-sm font-medium text-slate-100 bg-slate-800 rounded-lg hover:bg-slate-700 border border-slate-700">
                         Admin Panel
                     </a>
                     {% endif %}
@@ -47,7 +47,7 @@
         {% if messages %}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
             {% for message in messages %}
-            <div class="p-4 mb-4 rounded-lg flex items-start gap-3 {% if message.tags == 'success' %}bg-green-50 border border-green-200{% elif message.tags == 'error' %}bg-red-50 border border-red-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
+            <div class="p-4 mb-4 rounded-2xl flex items-start gap-3 {% if message.tags == 'success' %}bg-emerald-950/80 border border-emerald-700 text-emerald-200{% elif message.tags == 'error' %}bg-rose-950/80 border border-rose-700 text-rose-200{% else %}bg-sky-950/80 border border-sky-700 text-sky-200{% endif %}">
                 <svg class="w-5 h-5 flex-shrink-0 mt-0.5 {% if message.tags == 'success' %}text-green-500{% elif message.tags == 'error' %}text-red-500{% else %}text-blue-500{% endif %}" fill="currentColor" viewBox="0 0 20 20">
                     {% if message.tags == 'success' %}
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -69,21 +69,21 @@
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-                    <div class="text-sm text-gray-600">Total Members</div>
-                    <div class="text-2xl font-bold text-gray-900 mt-1">{{ memberships|length }}</div>
+                <div class="bg-slate-900 rounded-3xl shadow-xl shadow-slate-950/40 p-4 border border-slate-800">
+                    <div class="text-sm text-slate-400">Total Members</div>
+                    <div class="text-2xl font-bold text-slate-100 mt-1">{{ memberships|length }}</div>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-                    <div class="text-sm text-gray-600">Leaders</div>
-                    <div class="text-2xl font-bold text-purple-600 mt-1">{{ leaders|length }}</div>
+                <div class="bg-slate-900 rounded-3xl shadow-xl shadow-slate-950/40 p-4 border border-slate-800">
+                    <div class="text-sm text-slate-400">Leaders</div>
+                    <div class="text-2xl font-bold text-purple-400 mt-1">{{ leaders|length }}</div>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-                    <div class="text-sm text-gray-600">Coordinators</div>
-                    <div class="text-2xl font-bold text-blue-600 mt-1">{{ coordinators|length }}</div>
+                <div class="bg-slate-900 rounded-3xl shadow-xl shadow-slate-950/40 p-4 border border-slate-800">
+                    <div class="text-sm text-slate-400">Coordinators</div>
+                    <div class="text-2xl font-bold text-blue-400 mt-1">{{ coordinators|length }}</div>
                 </div>
-                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-                    <div class="text-sm text-gray-600">Regular Members</div>
-                    <div class="text-2xl font-bold text-gray-700 mt-1">{{ members|length }}</div>
+                <div class="bg-slate-900 rounded-3xl shadow-xl shadow-slate-950/40 p-4 border border-slate-800">
+                    <div class="text-sm text-slate-400">Regular Members</div>
+                    <div class="text-2xl font-bold text-slate-100 mt-1">{{ members|length }}</div>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {% for membership in leaders %}
-                        <div class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200 cursor-pointer hover:bg-purple-100 transition" onclick="showProfileCard({{ membership.user.id }})">
+                        <div class="flex items-center gap-3 p-4 bg-slate-950/80 rounded-3xl border border-slate-800 cursor-pointer hover:bg-slate-900 transition" onclick="showProfileCard({{ membership.user.id }})">
                             {% if membership.user.profile_picture %}
                             <img src="{{ membership.user.profile_picture.url }}" alt="{{ membership.user.username }}" class="w-12 h-12 rounded-full object-cover">
                             {% else %}
@@ -110,12 +110,12 @@
                             </div>
                             {% endif %}
                             <div class="flex-1">
-                                <div class="font-semibold text-gray-900">{{ membership.user.get_full_name|default:membership.user.username }}</div>
-                                <div class="text-xs text-gray-600">{{ membership.user.personal_email|default:membership.user.email }}</div>
-                                <div class="text-xs text-purple-600 font-medium mt-1">Leader</div>
+                                <div class="font-semibold text-slate-100">{{ membership.user.get_full_name|default:membership.user.username }}</div>
+                                <div class="text-xs text-slate-400">{{ membership.user.personal_email|default:membership.user.email }}</div>
+                                <div class="text-xs text-purple-300 font-medium mt-1">Leader</div>
                             </div>
                             {% if is_admin %}
-                            <div class="relative">
+                            <div class="relative flex flex-col items-end gap-2">
                                 <button onclick="toggleRoleMenu({{ membership.id }}, event)" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
@@ -128,6 +128,12 @@
                                         <button type="submit" name="role" value="coordinator" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">Set as Coordinator</button>
                                     </form>
                                 </div>
+                                {% if membership.user != request.user %}
+                                <form method="post" action="{% url 'remove_member' membership.id %}" onsubmit="event.stopPropagation(); return confirm('Remove {{ membership.user.get_full_name|default:membership.user.username }} from this club?');">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="event.stopPropagation()" class="px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100">Remove</button>
+                                </form>
+                                {% endif %}
                             </div>
                             {% endif %}
                         </div>
@@ -151,7 +157,7 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {% for membership in coordinators %}
-                        <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:bg-blue-100 transition" onclick="showProfileCard({{ membership.user.id }})">
+                        <div class="flex items-center gap-3 p-4 bg-slate-950/80 rounded-3xl border border-slate-800 cursor-pointer hover:bg-slate-900 transition" onclick="showProfileCard({{ membership.user.id }})">
                             {% if membership.user.profile_picture %}
                             <img src="{{ membership.user.profile_picture.url }}" alt="{{ membership.user.username }}" class="w-12 h-12 rounded-full object-cover">
                             {% else %}
@@ -165,7 +171,7 @@
                                 <div class="text-xs text-blue-600 font-medium mt-1">Coordinator</div>
                             </div>
                             {% if is_admin %}
-                            <div class="relative">
+                            <div class="relative flex flex-col items-end gap-2">
                                 <button onclick="toggleRoleMenu({{ membership.id }}, event)" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
@@ -178,6 +184,12 @@
                                         <button type="submit" name="role" value="leader" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">Set as Leader</button>
                                     </form>
                                 </div>
+                                {% if membership.user != request.user %}
+                                <form method="post" action="{% url 'remove_member' membership.id %}" onsubmit="event.stopPropagation(); return confirm('Remove {{ membership.user.get_full_name|default:membership.user.username }} from this club?');">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="event.stopPropagation()" class="px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100">Remove</button>
+                                </form>
+                                {% endif %}
                             </div>
                             {% endif %}
                         </div>
@@ -188,10 +200,10 @@
             {% endif %}
 
             <!-- Regular Members Section -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="bg-slate-900 rounded-3xl shadow-xl shadow-slate-950/40 border border-slate-800">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                    <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
                         </svg>
                         Members
@@ -201,7 +213,7 @@
                     {% if members %}
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {% for membership in members %}
-                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-100 transition" onclick="showProfileCard({{ membership.user.id }})">
+                        <div class="flex items-center gap-3 p-4 bg-slate-950/80 rounded-3xl border border-slate-800 cursor-pointer hover:bg-slate-900 transition" onclick="showProfileCard({{ membership.user.id }})">
                             {% if membership.user.profile_picture %}
                             <img src="{{ membership.user.profile_picture.url }}" alt="{{ membership.user.username }}" class="w-12 h-12 rounded-full object-cover">
                             {% else %}
@@ -210,12 +222,12 @@
                             </div>
                             {% endif %}
                             <div class="flex-1">
-                                <div class="font-semibold text-gray-900">{{ membership.user.get_full_name|default:membership.user.username }}</div>
-                                <div class="text-xs text-gray-600">{{ membership.user.personal_email|default:membership.user.email }}</div>
-                                <div class="text-xs text-gray-500 mt-1">Joined {{ membership.join_date|date:"M Y" }}</div>
+                                <div class="font-semibold text-slate-100">{{ membership.user.get_full_name|default:membership.user.username }}</div>
+                                <div class="text-xs text-slate-400">{{ membership.user.personal_email|default:membership.user.email }}</div>
+                                <div class="text-xs text-slate-500 mt-1">Joined {{ membership.join_date|date:"M Y" }}</div>
                             </div>
                             {% if is_admin %}
-                            <div class="relative">
+                            <div class="relative flex flex-col items-end gap-2">
                                 <button onclick="toggleRoleMenu({{ membership.id }}, event)" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
@@ -228,6 +240,12 @@
                                         <button type="submit" name="role" value="coordinator" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">Set as Coordinator</button>
                                     </form>
                                 </div>
+                                {% if membership.user != request.user %}
+                                <form method="post" action="{% url 'remove_member' membership.id %}" onsubmit="event.stopPropagation(); return confirm('Remove {{ membership.user.get_full_name|default:membership.user.username }} from this club?');">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="event.stopPropagation()" class="px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100">Remove</button>
+                                </form>
+                                {% endif %}
                             </div>
                             {% endif %}
                         </div>

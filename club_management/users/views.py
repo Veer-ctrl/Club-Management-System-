@@ -1,15 +1,18 @@
 # users/views.py
 from django.urls import reverse
-from django.contrib.auth import login, authenticate , logout
+from django.contrib.auth import login, authenticate , logout, update_session_auth_hash
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.utils import timezone
+from datetime import datetime, timedelta
+import random
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
-from .models import CustomUser
+from .models import CustomUser, EventNotification
 from clubs.models import Club, Membership
-from Events.models import Event, Registration
+from Events.models import Event, Registration, EventMedia, EventFeedback
 from django.views.decorators.cache import never_cache
 from django.contrib.auth import login, logout
 from django.contrib import messages
@@ -23,7 +26,7 @@ from django.http import JsonResponse
 from django.db.models import Q, Count
 from django.utils import timezone
 from clubs.models import Club, Membership
-from Events.models import Event, Registration
+from Events.models import Event, Registration, EventMedia
 from Application.models import Application
 from users.models import CustomUser
 from django.core.paginator import Paginator
@@ -43,7 +46,7 @@ def loginPage(request):
 
             # If user's role doesn't match selected role
             if selected_role and hasattr(user, 'role') and user.role != selected_role:
-                messages.error(request, 'Unknown user or incorrect role.')
+                messages.error(request, 'Invalid credentials.')
                 return redirect('login')
 
             # Role matches → allow login
@@ -65,15 +68,118 @@ def loginPage(request):
         form = CustomAuthenticationForm()
 
     return render(request, 'users/loginPage.html', {'form': form})
+def verify_otp(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+        
+    pending_user_id = request.session.get('pending_user_id')
+    pending_otp = request.session.get('pending_otp')
+    otp_created_at_str = request.session.get('otp_created_at')
+    
+    if not pending_user_id or not pending_otp:
+        messages.error(request, 'Session expired or invalid. Please login again.')
+        return redirect('login')
+        
+    # Check expiry (10 minutes)
+    otp_created_at = datetime.fromisoformat(otp_created_at_str)
+    if timezone.now() > otp_created_at + timedelta(minutes=10):
+        messages.error(request, 'OTP expired. Please request a new one.')
+        # Clean up session but keep user ID for resend
+        request.session.pop('pending_otp', None)
+        
+    if request.method == 'POST':
+        user_otp = request.POST.get('otp')
+        if not user_otp:
+            messages.error(request, 'Please enter the OTP.')
+        elif user_otp == pending_otp:
+            # Correct OTP
+            try:
+                user = CustomUser.objects.get(pk=pending_user_id)
+                user.is_active = True
+                user.save()
+                
+                login(request, user)
+                
+                # Success message
+                messages.success(request, f'Account verified successfully! Welcome, {user.username}!')
+                
+                # Clean up session
+                del request.session['pending_otp']
+                del request.session['pending_user_id']
+                del request.session['otp_created_at']
+                
+                # Redirect by role
+                if user.role == 'member':
+                    return redirect('dashboard')
+                elif user.role == 'admin':
+                    return redirect('admin_dashboard')
+                else:
+                    return redirect('Landing')
+            except CustomUser.DoesNotExist:
+                messages.error(request, 'User not found.')
+                return redirect('login')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+            
+    return render(request, 'users/otp_verification.html')
+
+def resend_otp(request):
+    pending_user_id = request.session.get('pending_user_id')
+    if not pending_user_id:
+        messages.error(request, 'Session expired. Please login again.')
+        return redirect('login')
+        
+    try:
+        user = CustomUser.objects.get(pk=pending_user_id)
+        otp = ''.join(random.choices('0123456789', k=6))
+        request.session['pending_otp'] = otp
+        request.session['otp_created_at'] = timezone.now().isoformat()
+        
+        # Send OTP via email
+        subject = 'Verify Your account - Club Management System'
+        message = f'Hello {user.username},\n\nYour new OTP for signup verification is: {otp}\n\nThis OTP will expire in 10 minutes.'
+        from_email = 'noreply@clubmanagement.com'
+        recipient_list = [user.personal_email]
+        
+        send_mail(subject, message, from_email, recipient_list)
+        messages.success(request, f'A new OTP has been sent to {user.personal_email}.')
+        return redirect('verify_otp')
+    except Exception as e:
+        messages.error(request, f'Error resending OTP: {str(e)}')
+        return redirect('login')
+
 
 def signup_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, f'Registration successful! Welcome {user.personal_email}')
-            return redirect('login')
+            # Create user but set as inactive
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            
+            # Generate OTP
+            otp = ''.join(random.choices('0123456789', k=6))
+            request.session['pending_otp'] = otp
+            request.session['pending_user_id'] = user.pk
+            request.session['otp_created_at'] = timezone.now().isoformat()
+            
+            # Send OTP via email
+            subject = 'Verify Your account - Club Management System'
+            message = f'Hello {user.username},\n\nYour OTP for signup verification is: {otp}\n\nThis OTP will expire in 10 minutes.'
+            from_email = 'noreply@clubmanagement.com'
+            recipient_list = [user.personal_email]
+            
+            try:
+                send_mail(subject, message, from_email, recipient_list)
+                messages.success(request, f'Registration successful! An OTP has been sent to {user.personal_email}. Please verify your account.')
+                return redirect('verify_otp')
+            except Exception as e:
+                # If mail fails, we might want to still allow verify but warn? 
+                # Or delete the user and ask to retry?
+                # For now, let's keep the user (inactive) and let them try resend from verify page
+                messages.warning(request, f'User created but error sending verification email: {str(e)}. Please try resending OTP.')
+                return redirect('verify_otp')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
@@ -174,13 +280,42 @@ def dashboard(request):
 
     available_clubs = Club.objects.filter(is_active=True).exclude(id__in=my_club_ids)
     
-    # Get user's registered events
-    user_registrations = Registration.objects.filter(user=request.user, status='registered').select_related('event', 'event__club')
+    now = timezone.now()
+
+    # Get user's registered events (used for "Past Events" participation + "Upcoming" exclusion)
+    user_registrations = Registration.objects.filter(
+        user=request.user,
+        status='registered',
+    ).select_related('event', 'event__club')
     registered_event_ids = [reg.event.id for reg in user_registrations]
-    registered_events = [reg.event for reg in user_registrations]
-    
-    # Exclude already registered events from upcoming events
-    upcoming_events = Event.objects.filter(status__in=['upcoming', 'ongoing']).exclude(id__in=registered_event_ids).select_related('club').order_by('start_time')[:12]
+    # Only show future registered events in the "My Registered Events" panel.
+    registered_events = [
+        reg.event for reg in user_registrations
+        if reg.event.end_time >= now and reg.event.status != 'cancelled'
+    ]
+
+    # Upcoming events should be based on time, not just status field.
+    upcoming_events = Event.objects.filter(
+        status__in=['upcoming', 'ongoing'],
+        end_time__gte=now,
+    ).exclude(id__in=registered_event_ids).select_related('club').order_by('start_time')[:12]
+
+    # Past/expired events: ended already (even if admin hasn't updated `status` to "completed")
+    happened_events_qs = Event.objects.filter(
+        ~Q(status='cancelled'),
+    ).filter(
+        Q(end_time__lt=now) | Q(status='completed')
+    ).select_related('club').order_by('-start_time')[:24]
+
+    # Annotate per-event UI flags used by the template.
+    user_registered_set = set(registered_event_ids)  # status='registered' => participated in your current feedback logic
+    feedback_event_ids = set(EventFeedback.objects.filter(user=request.user, event_id__in=[e.id for e in happened_events_qs]).values_list('event_id', flat=True))
+
+    happened_events = []
+    for e in happened_events_qs:
+        e.user_registered = e.id in user_registered_set
+        e.user_gave_feedback = e.id in feedback_event_ids
+        happened_events.append(e)
     
     # Get user's applications
     user_applications = Application.objects.filter(user=request.user).select_related('club').order_by('-applied_date')
@@ -196,16 +331,88 @@ def dashboard(request):
     for club in available_clubs:
         club.application_status = club_application_status.get(club.id, None)
 
+    assigned_club = None
+    events_for_media = Event.objects.none()
+    if request.user.role in ['admin', 'superadmin']:
+        assigned_club = get_admin_assigned_club(request.user)
+        if assigned_club:
+            events_for_media = Event.objects.filter(
+                club=assigned_club,
+            ).exclude(status='cancelled').select_related('club').order_by('-created_at')[:50]
+
+    photo_items = EventMedia.objects.filter(
+        event__club_id__in=my_club_ids,
+        media_type='photo',
+    ).select_related('event', 'event__club').order_by('-uploaded_at')[:24]
+
+    video_items = EventMedia.objects.filter(
+        event__club_id__in=my_club_ids,
+        media_type='video',
+    ).select_related('event', 'event__club').order_by('-uploaded_at')[:24]
+
+    can_upload_media = request.user.role in ['admin', 'superadmin'] and assigned_club is not None
+
+    # Group media by event for the gallery
+    participated_events_with_media = []
+    # Filter events belonging to user's clubs
+    club_events_with_media = Event.objects.filter(
+        club_id__in=my_club_ids
+    ).prefetch_related('media_items').distinct()
+
+    for event in club_events_with_media:
+        media_qs = event.media_items.all()
+        if media_qs.exists():
+            participated_events_with_media.append({
+                'event': event,
+                'photos': media_qs.filter(media_type='photo'),
+                'videos': media_qs.filter(media_type='video'),
+            })
+
+    notifications = EventNotification.objects.filter(user=request.user).select_related('club', 'event').order_by('-created_at')[:10]
+    unread_notifications_count = EventNotification.objects.filter(user=request.user, is_read=False).count()
+
     return render(request, 'users/dashboard.html', {
         'my_clubs': my_clubs,
         'available_clubs': available_clubs,
         'upcoming_events': upcoming_events,
         'registered_events': registered_events,
+        'happened_events': happened_events,
         'user_applications': user_applications,
         'pending_applications': pending_applications,
         'club_application_status': club_application_status,
-        'notifications': [],
+        'notifications': notifications,
+        'unread_notifications_count': unread_notifications_count,
+        'assigned_club': assigned_club,
+        'events_for_media': events_for_media,
+        'can_upload_media': can_upload_media,
+        'participated_events_with_media': participated_events_with_media,
     })
+
+
+@login_required
+def mark_notifications_read(request):
+    if request.method != 'POST':
+        return redirect('dashboard')
+
+    EventNotification.objects.filter(user=request.user).update(is_read=True)
+    return redirect('dashboard')
+
+
+@login_required
+def update_notification_preferences(request):
+    if request.method != 'POST':
+        return redirect('dashboard')
+
+    email_event_notifications = request.POST.get('email_event_notifications') == 'on'
+    request.user.email_event_notifications = email_event_notifications
+    request.user.save(update_fields=['email_event_notifications'])
+
+    if email_event_notifications:
+        messages.success(request, 'Event notification preferences updated.')
+    else:
+        messages.info(request, 'Event notifications turned off.')
+
+    return redirect('dashboard')
 
 
 @login_required
@@ -307,13 +514,31 @@ def register_event(request):
     if request.method != 'POST':
         return redirect('dashboard')
     event_id = request.POST.get('event_id')
+    payment_method = request.POST.get('payment_method', '').strip()
     try:
         ev = Event.objects.get(pk=event_id)
     except Event.DoesNotExist:
         messages.error(request, 'Event not found.')
         return redirect('dashboard')
-    Registration.objects.get_or_create(event=ev, user=request.user)
-    messages.success(request, 'Registered for the event.')
+
+    registration, created = Registration.objects.get_or_create(event=ev, user=request.user)
+    if not created and registration.status == 'registered' and registration.is_paid:
+        messages.info(request, 'You are already registered for this event.')
+        return redirect('dashboard')
+
+    if ev.entry_fee and ev.entry_fee > 0:
+        if not payment_method:
+            messages.error(request, 'Please select a payment method before confirming registration.')
+            return redirect('dashboard')
+        registration.payment_method = payment_method
+        registration.is_paid = payment_method != 'Pay at Event'
+        registration.amount_paid = ev.entry_fee if registration.is_paid else 0.00
+        registration.paid_at = timezone.now() if registration.is_paid else None
+    
+    registration.status = 'registered'
+    registration.save()
+
+    messages.success(request, 'Registered for the event successfully.')
     return redirect('dashboard')
 
 
@@ -362,12 +587,88 @@ def admin_required(function):
             return redirect('dashboard')
     return wrap
 
+
+def is_superadmin(user):
+    return getattr(user, 'role', None) == 'superadmin'
+
+
+def get_admin_assigned_club(user):
+    """
+    Resolve which club this admin manages.
+    Priority:
+    1) Explicit `CustomUser.assigned_club`
+    2) Active Membership with role='admin'
+    """
+    if getattr(user, 'assigned_club_id', None):
+        return user.assigned_club
+
+    membership = Membership.objects.filter(
+        user=user,
+        role='admin',
+        status='active',
+    ).select_related('club').first()
+    return membership.club if membership else None
+
 @login_required
 @admin_required
 def admin_dashboard(request):
     """Main admin dashboard"""
-    # Handle profile update POST request
     if request.method == 'POST':
+        # Media upload from the MEDIA sidebar section
+        if request.POST.get('form_type') == 'media_upload':
+            superadmin = is_superadmin(request.user)
+            assigned_club = None if superadmin else get_admin_assigned_club(request.user)
+
+            event_id = request.POST.get('event_id')
+            title = (request.POST.get('title') or '').strip()
+            media_file = request.FILES.get('media_file')
+
+            def form_response(success, message, status=200):
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({'success': success, 'message': message}, status=status)
+                if success:
+                    messages.success(request, message)
+                else:
+                    messages.error(request, message)
+                return redirect('admin_dashboard#section-media')
+
+            if not event_id or not media_file:
+                return form_response(False, 'Missing event or media file.', 400)
+
+            event = get_object_or_404(Event, pk=event_id)
+
+            if not superadmin:
+                if not assigned_club or event.club_id != assigned_club.id:
+                    return form_response(False, 'You can only upload media for your assigned club.', 403)
+
+            content_type = (media_file.content_type or '').lower()
+            media_type = None
+
+            if content_type.startswith('image/'):
+                media_type = 'photo'
+            elif content_type.startswith('video/'):
+                media_type = 'video'
+            else:
+                # Fallback by file extension
+                filename = (media_file.name or '').lower()
+                if filename.endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
+                    media_type = 'photo'
+                elif filename.endswith(('.mp4', '.mov', '.webm', '.mkv', '.avi', '.mpeg')):
+                    media_type = 'video'
+
+            if media_type not in ['photo', 'video']:
+                return form_response(False, 'Unsupported media type. Upload a photo or a video.', 400)
+
+            EventMedia.objects.create(
+                event=event,
+                uploaded_by=request.user,
+                file=media_file,
+                media_type=media_type,
+                title=title,
+            )
+            return form_response(True, 'Multimedia uploaded successfully!')
+
+        # Otherwise: Handle profile update POST request
         college_email = request.POST.get('college_email', '').strip()
         enrollment_number = request.POST.get('enrollment_number', '').strip()
         course = request.POST.get('course')
@@ -377,7 +678,7 @@ def admin_dashboard(request):
         personal_email = (request.POST.get('personal_email') or '').strip()
         phone = (request.POST.get('phone') or '').strip()
         profile_picture = request.FILES.get('profile_picture')
-        
+
         # Update user profile
         user = request.user
         # Handle unique nullable college_email safely
@@ -406,23 +707,72 @@ def admin_dashboard(request):
             user.enrollment_number = enrollment_number
         if profile_picture:
             user.profile_picture = profile_picture
-        
+
         user.save()
         messages.success(request, 'Profile updated successfully!')
         return redirect('admin_dashboard#section-profile')
-    
-    # GET: Get statistics
-    total_clubs = Club.objects.filter(is_active=True).count()
-    total_users = CustomUser.objects.filter(is_active=True).count()
-    total_events = Event.objects.exclude(status='cancelled').count()
-    pending_applications = Application.objects.filter(status='pending').count()
-    
-    # Recent activities
-    recent_clubs = Club.objects.order_by('-founded_date')[:5]
-    recent_events = Event.objects.order_by('-created_at')[:5]
-    recent_applications = Application.objects.order_by('-applied_date')[:5]
-    
+
+    # GET: Get statistics + dashboard panels
+    superadmin = is_superadmin(request.user)
+    assigned_club = None if superadmin else get_admin_assigned_club(request.user)
+
+    if superadmin:
+        total_clubs = Club.objects.filter(is_active=True).count()
+        total_users = CustomUser.objects.filter(is_active=True).count()
+        total_events = Event.objects.exclude(status='cancelled').count()
+        pending_applications = Application.objects.filter(status='pending').count()
+
+        recent_clubs = Club.objects.order_by('-founded_date')[:5]
+        recent_events = Event.objects.select_related('club').order_by('-created_at')[:5]
+        recent_applications = Application.objects.select_related('user', 'club').order_by('-applied_date')[:5]
+
+        recent_transactions = Application.objects.select_related('user', 'club').order_by('-applied_date')[:10]
+        all_events = Event.objects.select_related('club').exclude(status='cancelled').order_by('-created_at')
+
+        # Feedbacks
+        feedbacks = EventFeedback.objects.all()
+        recent_feedbacks = feedbacks.select_related('user', 'event').order_by('-submitted_at')[:5]
+        feedback_stats = {i: feedbacks.filter(rating=i).count() for i in range(1, 6)}
+    else:
+        if assigned_club:
+            total_clubs = 1
+            total_users = CustomUser.objects.filter(
+                membership__club=assigned_club,
+                membership__status='active',
+                is_active=True,
+            ).distinct().count()
+            total_events = Event.objects.filter(club=assigned_club).exclude(status='cancelled').count()
+            pending_applications = Application.objects.filter(club=assigned_club, status='pending').count()
+
+            recent_clubs = [assigned_club]
+            recent_events = Event.objects.filter(club=assigned_club).select_related('club').order_by('-created_at')[:5]
+            recent_applications = Application.objects.filter(club=assigned_club).select_related('user', 'club').order_by('-applied_date')[:5]
+
+            recent_transactions = Application.objects.filter(club=assigned_club).select_related('user', 'club').order_by('-applied_date')[:10]
+            all_events = Event.objects.filter(club=assigned_club).exclude(status='cancelled').select_related('club').order_by('-created_at')
+
+            # Feedbacks
+            feedbacks = EventFeedback.objects.filter(event__club=assigned_club)
+            recent_feedbacks = feedbacks.select_related('user', 'event').order_by('-submitted_at')[:5]
+            feedback_stats = {i: feedbacks.filter(rating=i).count() for i in range(1, 6)}
+        else:
+            total_clubs = 0
+            total_users = 0
+            total_events = 0
+            pending_applications = 0
+
+            recent_clubs = []
+            recent_events = []
+            recent_applications = []
+
+            recent_transactions = Application.objects.none()
+            all_events = Event.objects.none()
+            
+            recent_feedbacks = []
+            feedback_stats = {i: 0 for i in range(1, 6)}
+
     context = {
+        'assigned_club': assigned_club,
         'total_clubs': total_clubs,
         'total_users': total_users,
         'total_events': total_events,
@@ -430,14 +780,73 @@ def admin_dashboard(request):
         'recent_clubs': recent_clubs,
         'recent_events': recent_events,
         'recent_applications': recent_applications,
+        'recent_transactions': recent_transactions,
+        'all_events': all_events,
+        'recent_feedbacks': recent_feedbacks,
+        'feedback_stats': feedback_stats,
     }
     return render(request, 'admin_panel/admin_dashboard.html', context)
 
 @login_required
 @admin_required
+def get_event_media(request, event_id):
+    """AJAX endpoint to get media for a specific event"""
+    superadmin = is_superadmin(request.user)
+    assigned_club = None if superadmin else get_admin_assigned_club(request.user)
+
+    try:
+        event = get_object_or_404(Event, pk=event_id)
+
+        # Check if admin has access to this event
+        if not superadmin and (not assigned_club or event.club_id != assigned_club.id):
+            return JsonResponse({'error': 'Access denied'}, status=403)
+
+        photos = EventMedia.objects.filter(event=event, media_type='photo').order_by('-uploaded_at')
+        videos = EventMedia.objects.filter(event=event, media_type='video').order_by('-uploaded_at')
+
+        photo_data = [{
+            'id': media.id,
+            'title': media.title or media.event.title,
+            'file_url': media.file.url,
+            'uploaded_at': media.uploaded_at.strftime('%Y-%m-%d %H:%M'),
+        } for media in photos]
+
+        video_data = [{
+            'id': media.id,
+            'title': media.title or media.event.title,
+            'file_url': media.file.url,
+            'uploaded_at': media.uploaded_at.strftime('%Y-%m-%d %H:%M'),
+        } for media in videos]
+
+        return JsonResponse({
+            'event': {
+                'id': event.id,
+                'title': event.title,
+                'club_name': event.club.name,
+                'start_time': event.start_time.strftime('%Y-%m-%d %H:%M'),
+            },
+            'photos': photo_data,
+            'videos': video_data,
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+@admin_required
 def manage_clubs(request):
     """List all clubs with pagination"""
-    clubs_list = Club.objects.annotate(
+    superadmin = is_superadmin(request.user)
+    assigned_club = None if superadmin else get_admin_assigned_club(request.user)
+
+    clubs_list = Club.objects.all()
+    if not superadmin:
+        if not assigned_club:
+            clubs_list = Club.objects.none()
+        else:
+            clubs_list = Club.objects.filter(pk=assigned_club.pk)
+
+    clubs_list = clubs_list.annotate(
         member_count=Count('membership', filter=Q(membership__status='active'))
     ).order_by('-founded_date')
     
@@ -457,6 +866,7 @@ def manage_clubs(request):
     context = {
         'clubs': clubs,
         'search_query': search_query,
+        'is_superadmin': superadmin,
     }
     return render(request, 'admin_panel/manage_clubs.html', context)
 
@@ -464,6 +874,10 @@ def manage_clubs(request):
 @admin_required
 def add_club(request):
     """Add new club"""
+    if not is_superadmin(request.user):
+        messages.error(request, 'Only superadmins can add new clubs.')
+        return redirect('admin_dashboard')
+
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description')
@@ -484,6 +898,18 @@ def add_club(request):
                 logo=logo
             )
             messages.success(request, f'Club "{club.name}" created successfully!')
+
+            recipients = CustomUser.objects.filter(is_active=True, email_event_notifications=True)
+            EventNotification.objects.bulk_create([
+                EventNotification(
+                    user=u,
+                    club=club,
+                    event=None,
+                    title='New Club Created',
+                    message=f'Club "{club.name}" has been created.'
+                )
+                for u in recipients
+            ], batch_size=500)
             return redirect('manage_club')
         except Exception as e:
             messages.error(request, f'Error creating club: {str(e)}')
@@ -495,6 +921,11 @@ def add_club(request):
 def edit_club(request, club_id):
     """Edit existing club"""
     club = get_object_or_404(Club, id=club_id)
+    if not is_superadmin(request.user):
+        assigned_club = get_admin_assigned_club(request.user)
+        if not assigned_club or club.id != assigned_club.id:
+            messages.error(request, 'You can only edit your assigned club.')
+            return redirect('admin_dashboard')
     
     if request.method == 'POST':
         club.name = request.POST.get('name')
@@ -517,6 +948,9 @@ def edit_club(request, club_id):
 def delete_club(request, club_id):
     """Soft delete club (set is_active to False)"""
     club = get_object_or_404(Club, id=club_id)
+    if not is_superadmin(request.user):
+        messages.error(request, 'Only superadmins can delete clubs.')
+        return redirect('admin_dashboard')
     
     if request.method == 'POST':
         club.is_active = False
@@ -613,13 +1047,18 @@ def review_application(request, application_id):
             application.notes = notes
             application.save()
             
-            # Create membership
-            Membership.objects.create(
+            # Create or activate membership for approved application
+            membership, created = Membership.objects.update_or_create(
                 user=application.user,
                 club=application.club,
-                role='member',
-                status='active'
+                defaults={
+                    'role': 'member',
+                    'status': 'active'
+                }
             )
+            if not created and membership.status != 'active':
+                membership.status = 'active'
+                membership.save()
             messages.success(request, 'Application approved and membership created!')
             
         elif action == 'reject':
@@ -686,8 +1125,14 @@ def add_event(request):
         club_id = request.POST.get('club')
         image = request.FILES.get('image')
         is_public = request.POST.get('is_public') == 'on'
+        entry_fee = request.POST.get('entry_fee', '0.00')
+        payment_option = request.POST.get('payment_option', 'online')
         
         try:
+            # Automate club assignment if user has an assigned_club
+            assigned_club = getattr(request.user, 'assigned_club', None)
+            final_club_id = assigned_club.id if assigned_club else club_id
+
             event = Event.objects.create(
                 title=title,
                 description=description,
@@ -696,18 +1141,37 @@ def add_event(request):
                 end_time=end_time,
                 location=location,
                 capacity=capacity,
-                club_id=club_id,
+                club_id=final_club_id,
                 created_by=request.user,
                 image=image,
+                entry_fee=entry_fee,
+                payment_option=payment_option,
                 is_public=is_public,
                 status='upcoming'
             )
             messages.success(request, f'Event "{event.title}" created successfully!')
+
+            event_club = event.club
+            recipients = CustomUser.objects.filter(is_active=True, email_event_notifications=True)
+            EventNotification.objects.bulk_create([
+                EventNotification(
+                    user=u,
+                    club=event_club,
+                    event=event,
+                    title='New Event Created',
+                    message=f'New event "{event.title}" has been created for club "{event_club.name}".'
+                )
+                for u in recipients
+            ], batch_size=500)
             return redirect('manage_events')
         except Exception as e:
             messages.error(request, f'Error creating event: {str(e)}')
     
-    context = {'clubs': clubs}
+    assigned_club = getattr(request.user, 'assigned_club', None)
+    context = {
+        'clubs': clubs,
+        'assigned_club': assigned_club
+    }
     return render(request, 'admin_panel/add_events.html', context)
 
 @login_required
@@ -890,3 +1354,190 @@ def assign_member_role(request, membership_id):
         return redirect('view_club_members', club_id=membership.club.id)
     
     return redirect('view_club_members', club_id=membership.club.id)
+
+@login_required
+@admin_required
+def remove_member(request, membership_id):
+    """Remove a member from a club and update dashboards accordingly."""
+    membership = get_object_or_404(Membership, id=membership_id, status='active')
+    superadmin = is_superadmin(request.user)
+    assigned_club = None if superadmin else get_admin_assigned_club(request.user)
+
+    if not superadmin and (not assigned_club or membership.club != assigned_club):
+        messages.error(request, 'You do not have permission to remove this member.')
+        return redirect('view_club_members', club_id=membership.club.id)
+
+    if request.method == 'POST':
+        if membership.user == request.user:
+            messages.error(request, 'You cannot remove yourself from the club here.')
+            return redirect('view_club_members', club_id=membership.club.id)
+
+        member_name = membership.user.get_full_name() or membership.user.username
+        club_name = membership.club.name
+        membership.delete()
+        messages.success(request, f'{member_name} has been removed from {club_name}. They can now reapply to the club from their dashboard.')
+
+    return redirect('view_club_members', club_id=membership.club.id)
+
+
+from Events.models import EventFeedback
+
+@login_required
+def submit_event_feedback(request, event_id):
+    """Allow a member to submit feedback for a past event they attended"""
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    now = timezone.now()
+    event = get_object_or_404(
+        Event.objects.exclude(status='cancelled'),
+        id=event_id,
+        end_time__lt=now,
+    )
+
+    # Must be registered for the event
+    if not Registration.objects.filter(event=event, user=request.user, status='registered').exists():
+        if is_ajax:
+            return JsonResponse({'error': 'You can only submit feedback for events you attended.'}, status=403)
+        messages.error(request, 'You can only submit feedback for events you attended.')
+        return redirect('dashboard')
+
+    # Prevent duplicate feedback
+    if EventFeedback.objects.filter(event=event, user=request.user).exists():
+        if is_ajax:
+            return JsonResponse({'error': 'You have already submitted feedback for this event.'}, status=400)
+        messages.info(request, 'You have already submitted feedback for this event.')
+        return redirect('past_event_details', event_id=event_id)
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment', '').strip()
+
+        if not rating or not rating.isdigit() or int(rating) not in range(1, 6):
+            if is_ajax:
+                return JsonResponse({'error': 'Please provide a valid rating between 1 and 5.'}, status=400)
+            messages.error(request, 'Please provide a valid rating between 1 and 5.')
+            return render(request, 'users/submit_feedback.html', {'event': event})
+
+        feedback = EventFeedback.objects.create(
+            event=event,
+            user=request.user,
+            rating=int(rating),
+            comment=comment,
+        )
+        if is_ajax:
+            return JsonResponse({
+                'feedback': {
+                    'rating': feedback.rating,
+                    'comment': feedback.comment,
+                    'user_name': feedback.user.get_full_name() or feedback.user.username,
+                }
+            })
+
+        messages.success(request, 'Thank you for your feedback!')
+        return redirect('past_event_details', event_id=event_id)
+
+    # Should not be called with GET via the modal, but keep a safe fallback.
+    if is_ajax:
+        return JsonResponse({'error': 'Invalid request.'}, status=405)
+    return render(request, 'users/submit_feedback.html', {'event': event})
+
+
+@login_required
+@admin_required
+def manage_feedbacks(request):
+    """Admin view to see all event feedbacks"""
+    superadmin = is_superadmin(request.user)
+    assigned_club = None if superadmin else get_admin_assigned_club(request.user)
+
+    if superadmin:
+        feedbacks = EventFeedback.objects.select_related('event', 'event__club', 'user').order_by('-submitted_at')
+    elif assigned_club:
+        feedbacks = EventFeedback.objects.filter(
+            event__club=assigned_club
+        ).select_related('event', 'event__club', 'user').order_by('-submitted_at')
+    else:
+        feedbacks = EventFeedback.objects.none()
+
+    paginator = Paginator(feedbacks, 20)
+    page_number = request.GET.get('page', 1)
+    feedbacks_page = paginator.get_page(page_number)
+
+    return render(request, 'admin_panel/manage_feedbacks.html', {
+        'feedbacks': feedbacks_page,
+        'is_superadmin': superadmin,
+        'assigned_club': assigned_club,
+    })
+
+
+@login_required
+@admin_required
+def delete_feedback(request, feedback_id):
+    """Admin can delete a feedback entry"""
+    feedback = get_object_or_404(EventFeedback, id=feedback_id)
+    superadmin = is_superadmin(request.user)
+    assigned_club = None if superadmin else get_admin_assigned_club(request.user)
+
+    if not superadmin and (not assigned_club or feedback.event.club != assigned_club):
+        messages.error(request, 'You do not have permission to delete this feedback.')
+        return redirect('manage_feedbacks')
+
+    if request.method == 'POST':
+        feedback.delete()
+        messages.success(request, 'Feedback deleted successfully.')
+
+    return redirect('manage_feedbacks')
+
+
+@login_required
+def past_event_details(request, event_id):
+    """Show details of a past/completed event for a member"""
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    now = timezone.now()
+    event = get_object_or_404(
+        Event.objects.exclude(status='cancelled'),
+        id=event_id,
+        end_time__lt=now,
+    )
+
+    registration = Registration.objects.filter(event=event, user=request.user, status='registered').first()
+    if not registration and not is_ajax:
+        messages.error(request, 'You did not attend this event.')
+        return redirect('dashboard')
+
+    if is_ajax:
+        existing_feedback = EventFeedback.objects.filter(event=event, user=request.user).first()
+        can_give_feedback = registration is not None and existing_feedback is None
+
+        feedbacks_qs = (
+            EventFeedback.objects.filter(event=event)
+            .select_related('user')
+            .order_by('-submitted_at')
+        )
+        feedbacks = [
+            {
+                'rating': fb.rating,
+                'comment': fb.comment,
+                'user_name': fb.user.get_full_name() or fb.user.username,
+                'submitted_at': fb.submitted_at.strftime('%Y-%m-%d %H:%M'),
+            }
+            for fb in feedbacks_qs
+        ]
+
+        return JsonResponse({
+            'title': event.title,
+            'club_name': event.club.name,
+            'start_time': event.start_time.strftime('%Y-%m-%d %I:%M %p'),
+            'location': event.location,
+            'description': event.description,
+            'feedbacks': feedbacks,
+            'can_give_feedback': can_give_feedback,
+        })
+
+    existing_feedback = EventFeedback.objects.filter(event=event, user=request.user).first()
+    media = EventMedia.objects.filter(event=event).order_by('media_type', '-uploaded_at')
+
+    return render(request, 'users/past_event_details.html', {
+        'event': event,
+        'registration': registration,
+        'existing_feedback': existing_feedback,
+        'media': media,
+    })
