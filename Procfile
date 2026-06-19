@@ -1,1 +1,1 @@
-web: gunicorn club_management.wsgi
+gunicorn club_management.club_management.wsgi
