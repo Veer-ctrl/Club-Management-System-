@@ -9,15 +9,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True 
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -157,3 +155,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '232915@kit.ac.in'
 EMAIL_HOST_PASSWORD = 'xjwwqquzirnytfdv'  # Generate this in Google Account Settings
 DEFAULT_FROM_EMAIL = 'Club Management <232915@kit.ac.in>'
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

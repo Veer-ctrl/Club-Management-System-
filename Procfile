@@ -1,0 +1,1 @@
+web: gunicorn club_management.wsgi
