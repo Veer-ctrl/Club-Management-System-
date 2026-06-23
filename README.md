@@ -2,6 +2,8 @@
 
 A role-based web application built with **Django** and **SQLite** to streamline club operations, member management, and event organization. The system provides dedicated dashboards for Members, Admins, and Super Admins, enabling efficient management of clubs and their activities.
 
+Here is the live Demo : https://club-management-system-i3o3.onrender.com
+
 ---
 
 ## ✨ Features
